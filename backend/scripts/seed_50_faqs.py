@@ -136,7 +136,7 @@ FAQS = [
         "title": "Apna order live track kaise karein?",
         "topic": "shipping",
         "approved_content": (
-            "Aap website par 'Track Your Order' section mein apna Order ID (e.g. ORD-20261013-1001) daal kar foran status dekh saktay hain, "
+            "Aap hamari official website https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app/ par 'Track Your Order' section mein apna Order ID (e.g. ORD-20261013-1001) daal kar foran live status dekh saktay hain, "
             "ya chat mein bas apna Order ID likhein to Aria aapko live courier location aur delivery date bata degi!"
         ),
         "keywords": ["track order", "order tracking", "kahan pohancha", "where is my order", "live tracking"],

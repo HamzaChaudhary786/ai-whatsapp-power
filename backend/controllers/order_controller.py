@@ -10,6 +10,7 @@ from models.order_model import OrderCreate, OrderItem, OrderModel, OrderStatus, 
 
 
 from utils.phone_utils import normalize_pakistan_phone
+from config.settings import settings
 
 
 def generate_order_number() -> str:
@@ -447,7 +448,8 @@ class OrderController:
                     f"📍 *Delivery Destination:* {street_address}, {city}\n"
                     f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
                     f"Our atelier team is already preparing your package for courier dispatch! "
-                    f"You can track your order anytime with ID *#{order_number}*. 📦👗"
+                    f"You can track your order anytime with ID *#{order_number}*. 📦👗\n\n"
+                    f"🌐 *View Live Order & Website Catalog:*\n{settings.STOREFRONT_URL}"
                 )
                 async def _send_wa_order_notification():
                     clean_ph = normalize_pakistan_phone(phone)
@@ -889,7 +891,8 @@ class OrderController:
                             f"👗 *Ordered Items:*\n{items_desc}\n\n"
                             f"💵 *Total Payable:* PKR {total:,.2f} (Cash on Delivery)\n"
                             f"📍 *Delivery Destination:* {dest_str}\n\n"
-                            f"Jaise hi parcel courier rider ko handover hoga, hum aapko tracking notification bhej dein gay! 🌸🚚"
+                            f"Jaise hi parcel courier rider ko handover hoga, hum aapko tracking notification bhej dein gay! 🌸🚚\n\n"
+                            f"🌐 *Live Store & Order Portal:*\n{settings.STOREFRONT_URL}"
                         )
                     elif new_st_upper in ["SHIPPED", "IN_TRANSIT"]:
                         courier_p = order.get("courier_partner") or "Express Logistics"
@@ -903,7 +906,8 @@ class OrderController:
                             f"👗 *Package Details:*\n{items_desc}\n\n"
                             f"🏷️ *Courier Partner:* {courier_p}\n"
                             f"🔢 *Consignment / Tracking Number:* *{tr_no}*\n"
-                            f"🌐 *Live Tracking Link:*\n{tr_url}\n\n"
+                            f"🌐 *Courier Tracking Link:*\n{tr_url}\n\n"
+                            f"🛍️ *Store Website & Catalog:*\n{settings.STOREFRONT_URL}\n\n"
                             f"💵 *Payable on Delivery:* PKR {total:,.2f} (Cash on Delivery)\n"
                             f"📍 *Delivery Address:* {dest_str}\n"
                             f"⏳ *Estimated Delivery:* {est_del}\n\n"
@@ -919,7 +923,8 @@ class OrderController:
                             f"💵 *Amount to Pay Rider:* PKR {total:,.2f} (Cash on Delivery)\n"
                             f"📍 *Destination:* {dest_str}\n"
                             f"🔢 *Tracking #:* {tr_no}\n\n"
-                            f"Baraye meharbani apna phone active rakhein taake rider asani se aapse rabta kar sakay! 🌸📞"
+                            f"Baraye meharbani apna phone active rakhein taake rider asani se aapse rabta kar sakay! 🌸📞\n\n"
+                            f"🌐 *Store Website:* {settings.STOREFRONT_URL}"
                         )
                     elif new_st_upper == "DELIVERED":
                         wa_text = (
@@ -929,7 +934,8 @@ class OrderController:
                             f"Luxe Atelier par shopping karne ka bohat shukriya! ❤️\n"
                             f"Umeed hai aapko hamara outfit pasand aya hoga.\n\n"
                             f"🛡️ *14-Day Hassle-Free Exchange:*\n"
-                            f"Agar aapko size, color ya replacement ke hawalay se koi madad chahiye toh 14 dino ke andar hum se WhatsApp par rabta karein. 👗🛍️"
+                            f"Agar aapko size, color ya replacement ke hawalay se koi madad chahiye toh 14 dino ke andar hum se WhatsApp par rabta karein. 👗🛍️\n\n"
+                            f"🛍️ *Explore Our Latest Arrivals & New Styles:*\n{settings.STOREFRONT_URL}"
                         )
                     elif new_st_upper == "CANCELLED":
                         wa_text = (
@@ -938,14 +944,16 @@ class OrderController:
                             f"Aapka order *#{order_number}* cancel kar diya gaya hai.\n\n"
                             f"Aapke account par koi charges deduct nahi kiye gaye hain. "
                             f"Agar aapne yeh cancellation request nahi ki thi ya koi misunderstanding hui hai, "
-                            f"toh baraye meharbani foran hum se yahan WhatsApp par rabta karein. 🌸🤝"
+                            f"toh baraye meharbani foran hum se yahan WhatsApp par rabta karein. 🌸🤝\n\n"
+                            f"🛍️ *Browse Our Boutique Online:*\n{settings.STOREFRONT_URL}"
                         )
                     else:
                         wa_text = (
                             f"📦 *Order Status Update: #{order_number}*\n\n"
                             f"Assalam-o-Alaikum *{full_name}*,\n"
                             f"Aapke order ka status update ho kar *{new_st_upper}* ho gaya hai.\n"
-                            f"Details: {note or 'Processing by atelier.'} 🌸"
+                            f"Details: {note or 'Processing by atelier.'} 🌸\n\n"
+                            f"🌐 *Track Online:*\n{settings.STOREFRONT_URL}"
                         )
 
                     async def _send_wa_update():
@@ -1323,7 +1331,8 @@ class OrderController:
                     f"📍 *Delivery Destination:* {dest_str}\n"
                     f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
                     f"Our atelier team is already preparing your package for courier dispatch! "
-                    f"You can track your order anytime with ID *#{order_number}*. 📦👗"
+                    f"You can track your order anytime with ID *#{order_number}*. 📦👗\n\n"
+                    f"🌐 *View Live Order & Website Catalog:*\n{settings.STOREFRONT_URL}"
                 )
 
                 sent_ok = False

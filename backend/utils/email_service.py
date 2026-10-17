@@ -259,9 +259,10 @@ class EmailService:
         products: list,
         promo_code: str = "VIPSTYLE10",
         discount_percent: int = 10,
-        store_url: str = "https://fashionai.com/shop",
+        store_url: Optional[str] = None,
     ) -> str:
         """Render responsive VIP styling lookbook with product cards and promo voucher."""
+        target_store_url = store_url or settings.STOREFRONT_URL
         product_cards_html = ""
         for p in products[:3]:
             img = p.get("image_url") or "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=500&q=80"
@@ -415,7 +416,7 @@ class EmailService:
         products: list,
         promo_code: str = "VIPSTYLE10",
         discount_percent: int = 10,
-        store_url: str = "https://fashionai.com/shop",
+        store_url: Optional[str] = None,
     ) -> bool:
         """Dispatches personalized lookbook email containing top ML recommended products."""
         if not recipient_email or "@" not in recipient_email:
@@ -469,7 +470,9 @@ class EmailService:
         currency: str,
         items: list,
         delivery_address: str,
+        store_url: Optional[str] = None,
     ) -> str:
+        target_store_url = store_url or settings.STOREFRONT_URL
         items_rows_html = ""
         for it in items:
             img = it.get("image_url") or "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=300&q=80"
@@ -548,7 +551,13 @@ class EmailService:
         <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Payment Method: Cash on Delivery (COD)</div>
       </div>
 
-      <p style="font-size: 13px; color: #94a3b8; text-align: center; margin: 20px 0 0;">
+      <div style="text-align: center; margin: 24px 0 14px;">
+        <a href="{target_store_url}" style="display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 9999px; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
+          🌐 Visit Our Live Boutique & Track Order
+        </a>
+      </div>
+
+      <p style="font-size: 13px; color: #94a3b8; text-align: center; margin: 16px 0 0;">
         📦 <b>Track Your Order:</b> You can track your courier dispatch anytime on our website or reply to Aria on WhatsApp with <b>#{order_number}</b>!
       </p>
     </div>
@@ -618,7 +627,9 @@ class EmailService:
         items: list,
         delivery_address: str,
         note: Optional[str] = None,
+        store_url: Optional[str] = None,
     ) -> str:
+        target_store_url = store_url or settings.STOREFRONT_URL
         st_upper = str(new_status).upper()
 
         status_styles = {
@@ -753,6 +764,11 @@ class EmailService:
       </div>
 
       <div style="text-align: center; margin-top: 24px;">
+        <div style="margin-bottom: 14px;">
+          <a href="{target_store_url}" style="display: inline-block; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 9999px; box-shadow: 0 4px 14px rgba(99,102,241,0.4);">
+            🌐 Visit Live Boutique & Track Order
+          </a>
+        </div>
         <p style="font-size: 13px; color: #94a3b8; margin: 0 0 12px;">Need instant assistance or have styling questions?</p>
         <a href="https://wa.me/" style="display: inline-block; background: #25d366; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 10px 24px; border-radius: 9999px;">
           💬 Chat with Stylist on WhatsApp

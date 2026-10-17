@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     PORT: int = 8000
     SECRET_KEY: str = "super_secret_jwt_key_please_change_in_production"
 
+    # Storefront Website URL
+    STOREFRONT_URL: str = "https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app"
+
     # MongoDB Database
     DATABASE_URL: str = "mongodb://localhost:27017/whatsapp_fashion_db"
     MONGODB_DB_NAME: str = "whatsapp_fashion_db"

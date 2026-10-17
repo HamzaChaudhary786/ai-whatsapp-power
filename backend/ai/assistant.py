@@ -485,7 +485,10 @@ class FashionAssistant:
             "6. BOUTIQUE POLICIES:\n"
             "Use [STORE POLICIES & FAQS] for delivery timelines (Same-day Lahore, 24-48h nationwide, Free delivery), Cash on Delivery (COD), open parcel policy, and 7-day exchange.\n\n"
             "7. BILINGUAL ELEGANCE:\n"
-            "Converse naturally in warm, elegant English or Roman Urdu matching the user's natural language. Keep text polished and clutter-free.\n"
+            "Converse naturally in warm, elegant English or Roman Urdu matching the user's natural language. Keep text polished and clutter-free.\n\n"
+            f"8. LIVE STOREFRONT WEBSITE LINK:\n"
+            f"Our official live customer website is: {settings.STOREFRONT_URL}\n"
+            f"When customer asks to browse full catalog, explore dresses, or wants website links/order tracking online, warmly share our live website link: {settings.STOREFRONT_URL}\n"
         )
 
         user_prompt = f"""[CONTEXT DATA]
@@ -1449,7 +1452,8 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"• *Estimated Delivery:* {est_delivery} ⏳\n"
                         f"• *Total Payable on Delivery:* PKR {total_val:,.2f} (COD)\n\n"
                         f"👗 *Items in Parcel:*\n{items_desc}\n\n"
-                        f"🌐 *Live Public Tracking Link:*\n{tracking_url}\n\n"
+                        f"🌐 *Courier Tracking Link:*\n{tracking_url}\n\n"
+                        f"🛍️ *Live Storefront & Catalog:*\n{settings.STOREFRONT_URL}\n\n"
                         f"📌 *Note:* Courier rider parcel deliver karne se pehle aapse call par rabta karega. Baraye meharbani apna phone active rakhein! 📞✨"
                     )
                     return StylistReply(reply_msg, image_url=first_img)
@@ -1461,7 +1465,8 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"• *Tracking Number:* *{tracking_num}*\n"
                         f"• *Destination:* {dest_city}\n"
                         f"• *Cash to Pay Rider:* PKR {total_val:,.2f} (COD)\n\n"
-                        f"Rider jald hi door-step par pohnch kar call karega. Baraye meharbani phone active rakhein! 🌸📞"
+                        f"Rider jald hi door-step par pohnch kar call karega. Baraye meharbani phone active rakhein! 🌸📞\n\n"
+                        f"🛍️ *Store Website & Catalog:* {settings.STOREFRONT_URL}"
                     )
                     return StylistReply(reply_msg, image_url=first_img)
 
@@ -1471,7 +1476,8 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"Aapka order *#{ord_no}* confirm ho chuka hai aur hamari atelier team is waqt packaging & quality inspection kar rahi hai. 👗🌸\n\n"
                         f"📦 *Ordered Items:*\n{items_desc}\n\n"
                         f"🚚 *Estimated Courier Dispatch:* Aaj shaam ya kal subah parcel courier rider ko handover kar diya jayega.\n"
-                        f"Jaise hi parcel courier rider ke hawale hoga, hum aapko live Tracking Number aur Tracking Link WhatsApp par bhej dein gay! 🚚✨"
+                        f"Jaise hi parcel courier rider ke hawale hoga, hum aapko live Tracking Number aur Tracking Link WhatsApp par bhej dein gay! 🚚✨\n\n"
+                        f"🛍️ *Explore More Designs on Website:*\n{settings.STOREFRONT_URL}"
                     )
                     return StylistReply(reply_msg, image_url=first_img)
 
@@ -1480,21 +1486,24 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"🎉 *Order Delivered!* 🌸✨\n\n"
                         f"Aapka order *#{ord_no}* hamare courier partner ne kamyabi se deliver kar diya hai. ❤️\n\n"
                         f"• *Tracking Number:* *{tracking_num}* ({courier_name})\n\n"
-                        f"Luxe Atelier par shopping karne ka shukriya! Agar size, color ya replacement ke hawalay se koi exchange chahiye toh batayein, hamari *14-day exchange policy* mojood hai! 👗🛍️"
+                        f"Luxe Atelier par shopping karne ka shukriya! Agar size, color ya replacement ke hawalay se koi exchange chahiye toh batayein, hamari *14-day exchange policy* mojood hai! 👗🛍️\n\n"
+                        f"🛍️ *Explore Our Latest Arrivals & Fresh Designs:*\n{settings.STOREFRONT_URL}"
                     )
                     return StylistReply(reply_msg, image_url=first_img)
 
                 elif ord_status == "CANCELLED":
                     reply_msg = (
                         f"❌ Aapka order *#{ord_no}* cancel ho chuka hai.\n\n"
-                        f"Is order ke koi pending charges nahi hain. Agar aap hamari nayi collection dekhna chahein ya naya order place karna chahein toh batayein! 👗🌸"
+                        f"Is order ke koi pending charges nahi hain. Agar aap hamari nayi collection dekhna chahein ya naya order place karna chahein toh batayein! 👗🌸\n\n"
+                        f"🛍️ *Browse Complete Collection Online:*\n{settings.STOREFRONT_URL}"
                     )
                     return StylistReply(reply_msg)
 
             # 4. If no order found at all
             return StylistReply(
                 "🔍 Maazrat, aapke is phone number par filhal koi active order ya parcel nahi mila. 🌸\n\n"
-                "Agar aapke paas koi specific Order Number (e.g. *#ORD-20261014-1250*) ya Courier Tracking Number (e.g. *TRX-20261014-9841*) hai, toh baraye meharbani share karein taake main foran live status check kar sakoon! ✨"
+                "Agar aapke paas koi specific Order Number (e.g. *#ORD-20261014-1250*) ya Courier Tracking Number (e.g. *TRX-20261014-9841*) hai, toh baraye meharbani share karein taake main foran live status check kar sakoon! ✨\n\n"
+                f"🛍️ *Aap hamari website par bhee direct collection dekh saktay hain:*\n{settings.STOREFRONT_URL}"
             )
 
         # 1.6 Check Product Variant & Stock Availability Inquiry (Sizes, Colors, Stock)
@@ -1852,6 +1861,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
 
             nudge_str = f"\n\n{conversion_nudge}" if conversion_nudge else "\n\nWould you like to reserve your size with Free Express Delivery? Reply with your size and city! 👗"
             photo_line = f"\n📸 Product Photo: {top_img}" if top_img else ""
+            store_line = f"\n🛍️ *Browse Full Collection Online:*\n{settings.STOREFRONT_URL}\n"
             fallback_card = (
                 f"✨ Recommended for You: {top['name']}\n\n"
                 f"• Price: {top['price']} (Free Express Delivery 🚚)\n"
@@ -1859,6 +1869,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                 f"• Colors: {top.get('colors')}\n"
                 f"• Fabric & Style: {top.get('description', '')[:100]}...\n"
                 f"{photo_line}"
+                f"{store_line}"
                 f"{nudge_str}"
             )
             return StylistReply(
@@ -1930,6 +1941,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"🎨 *Available Colors:*\n{colors_str}\n\n"
                         f"📏 *Available Sizes:* {sizes_str}\n\n"
                         f"📸 *Product Photo:* {p_img}\n\n"
+                        f"🛍️ *View on Website:* {settings.STOREFRONT_URL}\n\n"
                         f"Aapko kaunsa color aur size chahiye? Main aapke liye foran reserve kar sakti hoon! 👗🌿"
                     )
                     return StylistReply(
@@ -1981,6 +1993,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"• *Colors*: {', '.join(colors) if colors else 'Classic White, Sky Blue'}\n"
                         f"• *Fabric & Details*: {prod_doc.get('description', 'Crafted from premium fabric designed for all-day comfort.')}\n\n"
                         f"📸 *Product Photo Preview:* {p_img}\n\n"
+                        f"🛍️ *View on Website:* {settings.STOREFRONT_URL}\n\n"
                         f"💡 *Styling Tip*: Pairs effortlessly with relaxed chinos, tailored linen pants, or denim for an elevated casual look.\n\n"
                         f"Would you like to reserve your size or place an order today?",
                         image_url=p_img,
@@ -2011,12 +2024,19 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         f"• Status: *{status_text}*\n"
                         f"• Total: {currency} {total:,.2f}\n"
                         f"• Items: {len(order.get('items', []))} item(s)\n\n"
+                        f"🌐 *Track & View Live on Website:*\n{settings.STOREFRONT_URL}\n\n"
                         "Need assistance with changes or tracking? Reply *agent* anytime!"
                     )
                 else:
-                    return f"🔍 We couldn't find order *{extracted_no}*. Please check your order ID or reply *agent* to speak with our support desk."
+                    return (
+                        f"🔍 We couldn't find order *{extracted_no}*. Please check your order ID or reply *agent* to speak with our support desk.\n\n"
+                        f"🌐 *Track Directly on Website:*\n{settings.STOREFRONT_URL}"
+                    )
             else:
-                return "📦 To check your order status, please reply with your Order Number (e.g. *ORD-20261011-1001*)."
+                return (
+                    f"📦 To check your order status, please reply with your Order Number (e.g. *ORD-20261011-1001*).\n\n"
+                    f"🌐 *Or Track Directly on Website:*\n{settings.STOREFRONT_URL}"
+                )
 
         # 4. Catalog Recommendations Fallback
         if intent == "browse_catalog" or any(w in lowered for w in ["dress", "shirt", "pant", "catalog", "collection", "suit", "kurti"]):
@@ -2028,6 +2048,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                     variant = await db["product_variants"].find_one({"product_id": str(p["_id"])})
                     price_str = f"PKR {variant['price']:,.2f}" if variant and "price" in variant else "Best Price"
                     catalog_lines.append(f"{idx}. *{p['name']}* ({p['category']}) - {price_str}")
+                catalog_lines.append(f"\n🛍️ *Browse Entire Luxury Collection Online:*\n{settings.STOREFRONT_URL}")
                 catalog_lines.append("\nReply with the product name to see colors, sizes, or place an order!")
                 return "\n".join(catalog_lines)
 
@@ -2055,6 +2076,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
 
         return StylistReply(
             "Maazrat, mere paas is sawal ki mukammal maloomat nahi hai. 🌸\n\n"
+            f"🛍️ *Aap hamari live boutique website par bhee visit kar saktay hain:*\n{settings.STOREFRONT_URL}\n\n"
             "Kya main yeh chat hamare live human boutique stylist / support agent ko assign kar doon? "
             "Aap 'Haan' ya 'Nahi' likh kar reply karein. 🤝✨"
         )

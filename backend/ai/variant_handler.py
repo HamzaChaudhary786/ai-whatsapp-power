@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 from bson import ObjectId
 
 from ai.stylist_reply import StylistReply
+from config.settings import settings
 
 
 class VariantInquiryHandler:
@@ -278,6 +279,7 @@ class VariantInquiryHandler:
                     f"• *Price:* PKR {base_price:,.2f} (Free Express Delivery 🚚)\n"
                     f"• *Payment:* Cash on Delivery (COD)\n\n"
                     f"📸 *Product Photo:* {prod_img}\n\n"
+                    f"🛍️ *View Full Color Gallery Online:*\n{settings.STOREFRONT_URL}\n\n"
                     f"Aapko kaunsa color pasand hai? Main aapke liye foran reserve kar sakti hoon! 👗✨"
                 )
             return StylistReply(
@@ -305,6 +307,7 @@ class VariantInquiryHandler:
             f"💵 *Price:* PKR {base_price:,.2f} (Complimentary Free Express Delivery 🚚)\n"
             f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
             f"📸 *Product Photo:* {prod_img}\n\n"
+            f"🛍️ *Browse Full Catalog & Sizes Online:*\n{settings.STOREFRONT_URL}\n\n"
             f"Aapko kaunsa size aur color chahiye? Main aapka order prepare kar sakti hoon! 🌸"
         )
         return StylistReply(

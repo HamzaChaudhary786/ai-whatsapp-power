@@ -8,6 +8,7 @@ from db.mongodb import get_database
 from models.campaign_model import CampaignCreate, CampaignModel, CampaignStatus
 from integrations.whatsapp import whatsapp_client
 from utils.email_service import email_service
+from config.settings import settings
 
 
 class CampaignController:
@@ -42,7 +43,7 @@ class CampaignController:
             promo_code=data.promo_code or "FLASH25",
             discount_percent=data.discount_percent or 25,
             description=data.description,
-            store_url=data.store_url or "http://localhost:3000",
+            store_url=data.store_url or settings.STOREFRONT_URL,
             channels=data.channels or ["WHATSAPP", "EMAIL"],
             is_active_banner=data.is_active_banner if data.is_active_banner is not None else True,
             valid_from=data.valid_from,
@@ -153,7 +154,7 @@ class CampaignController:
         promo_code = campaign.get("promo_code", "SALE25")
         discount_percent = campaign.get("discount_percent", 25)
         description = campaign.get("description", "")
-        store_url = campaign.get("store_url", "http://localhost:5173")
+        store_url = campaign.get("store_url") or settings.STOREFRONT_URL
 
         # Query all eligible customers (Safeguard 1: Anti-Spam Compliance - only opted-in customers)
         cursor = db["customers"].find({

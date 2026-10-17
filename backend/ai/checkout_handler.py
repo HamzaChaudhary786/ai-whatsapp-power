@@ -10,6 +10,7 @@ from models.order_model import OrderCreate, OrderItem, AddressSnapshot, OrderSta
 from controllers.order_controller import OrderController
 from utils.email_service import email_service
 from utils.phone_utils import normalize_pakistan_phone
+from config.settings import settings
 
 
 class CheckoutHandler:
@@ -631,7 +632,8 @@ class CheckoutHandler:
                         f"━━━━━━━━━━━━━━━━━━━━\n\n"
                         f"📸 *Product Photo:* {session.get('product_image')}\n\n"
                         f"Aapko WhatsApp aur Email par confirmation dispatch note send kar diya gaya hai. "
-                        f"Kisi bhi waqt status check karne ke liye *'Track my order'* reply karein. "
+                        f"Kisi bhi waqt status check karne ke liye *'Track my order'* reply karein.\n\n"
+                        f"🌐 *View Live Order Details & Storefront:*\n{settings.STOREFRONT_URL}\n\n"
                         f"Thank you for shopping with us! 🌸👗"
                     )
 
@@ -646,7 +648,8 @@ class CheckoutHandler:
                     return StylistReply(
                         f"⚠️ *Stock Notice:*\n\n"
                         f"Maazrat! {http_err.detail}\n\n"
-                        f"Kya aap koi doosra size ya outfit choose karna chahein gay? 🌸👗"
+                        f"Kya aap koi doosra size ya outfit choose karna chahein gay? 🌸👗\n\n"
+                        f"🌐 *Browse Available Collections Online:*\n{settings.STOREFRONT_URL}"
                     )
                 except Exception as err:
                     print(f"[ERROR] Failed to place confirmed order: {err}")
