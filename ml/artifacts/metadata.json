@@ -1,0 +1,11 @@
+{
+  "model_name": "intent_classifier",
+  "version": "v1.0.0",
+  "dataset_version": "fashion_intents_v1",
+  "trained_at": "2026-10-12T07:23:21.571068+00:00",
+  "metrics": {
+    "accuracy": 0.6,
+    "macro_f1": 0.5352
+  },
+  "artifact_path": "ml\\artifacts\\intent_model.pkl"
+}
