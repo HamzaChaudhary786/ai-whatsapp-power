@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from config.settings import settings
 from db.mongodb import close_mongo_connection, connect_to_mongo
 from routes.ai_routes import router as ai_router
@@ -69,8 +70,13 @@ from fastapi.responses import JSONResponse
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    if isinstance(exc, HTTPException):
-        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    if isinstance(exc, (HTTPException, StarletteHTTPException)):
+        headers = getattr(exc, "headers", None)
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": exc.detail},
+            headers=headers,
+        )
     import traceback
     print(f"[ERROR] Uncaught exception at {request.url.path}: {exc}")
     traceback.print_exc()
