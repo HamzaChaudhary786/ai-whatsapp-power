@@ -1266,6 +1266,17 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
       if (sortBy === 'PRICE_HIGH_LOW') return priceB - priceA;
       if (sortBy === 'NEWEST') return new Date(b.created_at || 0) - new Date(a.created_at || 0);
       if (sortBy === 'DISCOUNT') return (b.discount_percent || 0) - (a.discount_percent || 0);
+      if (sortBy === 'TRENDING') {
+        const aSales = Number(a.sales_count || 0);
+        const bSales = Number(b.sales_count || 0);
+        if (bSales !== aSales) return bSales - aSales;
+        const aOrders = Number(a.order_count || 0);
+        const bOrders = Number(b.order_count || 0);
+        if (bOrders !== aOrders) return bOrders - aOrders;
+        const aScore = Number(a.trending_score || (a.is_trending ? 10 : 0));
+        const bScore = Number(b.trending_score || (b.is_trending ? 10 : 0));
+        return bScore - aScore;
+      }
       return 0;
     });
 
@@ -1290,9 +1301,29 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
     return /summer|linen|cotton|chiffon|lawn|breezy|sundress|floral|kurti|camisole|sleeveless/i.test(text);
   });
 
-  const trendingProducts = products.filter(
-    (p) => p.is_trending || (p.total_stock && p.total_stock > 10)
-  );
+  // Data-Driven Trending / Bestseller Ranking (ML & Sales Order Velocity):
+  // 1. Highest sales_count first (e.g. 10 sales, 6 sales, 3 sales...)
+  // 2. Highest order_count next
+  // 3. Highest ML trending_score next
+  // 4. Products marked is_trending: true
+  const trendingProducts = [...products]
+    .sort((a, b) => {
+      const aSales = Number(a.sales_count || 0);
+      const bSales = Number(b.sales_count || 0);
+      if (bSales !== aSales) return bSales - aSales;
+
+      const aOrders = Number(a.order_count || 0);
+      const bOrders = Number(b.order_count || 0);
+      if (bOrders !== aOrders) return bOrders - aOrders;
+
+      const aScore = Number(a.trending_score || (a.is_trending ? 10 : 0));
+      const bScore = Number(b.trending_score || (b.is_trending ? 10 : 0));
+      if (bScore !== aScore) return bScore - aScore;
+
+      return (b.is_trending ? 1 : 0) - (a.is_trending ? 1 : 0);
+    })
+    .filter((p) => (p.sales_count > 0 || p.order_count > 0 || p.is_trending || (p.total_stock && p.total_stock > 0)))
+    .slice(0, 12);
 
   const renderCuratedShelf = (title, subtitle, icon, badgeText, badgeColor, items, shelfId) => {
     if (!items || items.length === 0) return null;
@@ -1372,11 +1403,19 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                         <Sun size={11} /> {pricing.season}
                       </span>
                     )}
-                    {pricing.isTrending && (
+                    {p.sales_count > 0 ? (
+                      <span className="shelf-badge-trending" title={`${p.sales_count} units ordered & sold`}>
+                        <Sparkles size={11} /> {p.sales_count} Sold
+                      </span>
+                    ) : p.order_count > 0 ? (
+                      <span className="shelf-badge-trending" title={`${p.order_count} boutique orders`}>
+                        <Sparkles size={11} /> {p.order_count} Orders
+                      </span>
+                    ) : pricing.isTrending ? (
                       <span className="shelf-badge-trending">
                         <Sparkles size={11} /> Hot
                       </span>
-                    )}
+                    ) : null}
                   </div>
 
                   <div className="shelf-card-cat-badge">{p.category}</div>
@@ -2858,11 +2897,11 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
       )}
 
       {renderCuratedShelf(
-        'Trending Now & Client Favorites',
-        'Most admired and coveted high-demand styles chosen by our clientele',
+        'Trending Now & Bestseller Outfits',
+        'Top-ordered luxury styles ranked by customer sales volume & demand velocity',
         <Sparkles size={20} />,
-        '✨ CLIENT FAVORITES',
-        '#a855f7',
+        '🔥 TOP SALES & ORDERS',
+        '#ec4899',
         trendingProducts,
         'trending-showcase-section'
       )}
@@ -3002,6 +3041,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                 }}
               >
                 <option value="DEFAULT">Recommended / Curated</option>
+                <option value="TRENDING">🔥 Most Sold & Ordered</option>
                 <option value="PRICE_LOW_HIGH">Price: Low to High</option>
                 <option value="PRICE_HIGH_LOW">Price: High to Low</option>
                 <option value="NEWEST">Newest Arrivals</option>
@@ -3242,6 +3282,15 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                           <Flame size={11} /> {pricing.discountPercent ? `-${pricing.discountPercent}%` : 'SALE'}
                         </span>
                       )}
+                      {p.sales_count > 0 ? (
+                        <span className="shelf-badge-trending" style={{ width: 'fit-content' }} title={`${p.sales_count} units sold`}>
+                          <Sparkles size={11} /> {p.sales_count} Sold
+                        </span>
+                      ) : p.order_count > 0 ? (
+                        <span className="shelf-badge-trending" style={{ width: 'fit-content' }} title={`${p.order_count} client orders`}>
+                          <Sparkles size={11} /> {p.order_count} Orders
+                        </span>
+                      ) : null}
                     </div>
 
                     <div

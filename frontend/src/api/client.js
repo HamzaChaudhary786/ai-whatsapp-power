@@ -203,6 +203,8 @@ export const api = {
     const q = category && category !== 'All' ? `?category=${encodeURIComponent(category)}` : '';
     return fetchJson(`/products/${q}`);
   },
+  getTrendingProducts: (limit = 12) =>
+    fetchJson(`/products/trending?limit=${limit}`).catch(() => []),
   getProduct: (idOrSlug) => fetchJson(`/products/${idOrSlug}`),
   createProduct: (data) =>
     fetchJson('/products/', {

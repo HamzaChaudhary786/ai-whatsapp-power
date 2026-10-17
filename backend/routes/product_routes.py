@@ -74,6 +74,12 @@ async def list_products(
     return await product_controller.list_products(category=category, is_active=is_active, limit=limit, skip=skip)
 
 
+@router.get("/trending")
+async def get_trending_products(limit: int = Query(12, ge=1, le=50)):
+    """List top trending products ordered strictly by sales volume, order count, and ML demand (Public)."""
+    return await product_controller.get_trending_products(limit=limit)
+
+
 @router.get("/export-csv")
 async def export_products_csv(_staff: dict = Depends(require_staff)):
     """Export complete product catalog and variants to a downloadable CSV file (Staff/Admin access only)."""

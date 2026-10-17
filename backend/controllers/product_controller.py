@@ -366,6 +366,42 @@ class ProductController:
                     "available_quantity": v.get("available_quantity", 0),
                 })
 
+        # Batch aggregate real sales and order counts from orders collection
+        sales_map = {}
+        try:
+            agg_pipeline = [
+                {"$unwind": "$items"},
+                {"$match": {"items.product_id": {"$in": prod_ids}}},
+                {
+                    "$group": {
+                        "_id": "$items.product_id",
+                        "sales_count": {"$sum": {"$ifNull": ["$items.quantity", 1]}},
+                        "order_count": {"$sum": 1},
+                    }
+                }
+            ]
+            agg_cursor = db["orders"].aggregate(agg_pipeline)
+            async for stat in agg_cursor:
+                pid = str(stat.get("_id"))
+                if pid:
+                    sales_map[pid] = {
+                        "sales_count": int(stat.get("sales_count", 0)),
+                        "order_count": int(stat.get("order_count", 0)),
+                    }
+        except Exception as e:
+            print(f"[WARNING] ProductController.list_products: Sales aggregation error: {e}")
+
+        # Batch query customer inquiries / demand tracker
+        demand_map = {}
+        try:
+            d_cursor = db["product_demand"].find({"product_id": {"$in": prod_ids}})
+            async for d in d_cursor:
+                pid = str(d.get("product_id"))
+                if pid:
+                    demand_map[pid] = int(d.get("inquiry_count", 0))
+        except Exception:
+            pass
+
         items = []
         for doc in docs:
             pid = str(doc["_id"])
@@ -374,6 +410,17 @@ class ProductController:
             min_price = min(prices) if prices else 0.0
             max_price = max(prices) if prices else 0.0
             total_stock = sum(v.get("available_quantity", 0) for v in variants)
+
+            stat = sales_map.get(pid, {})
+            sales_cnt = max(stat.get("sales_count", 0), int(doc.get("sales_count") or 0))
+            order_cnt = max(stat.get("order_count", 0), int(doc.get("order_count") or 0))
+            inquiry_cnt = max(demand_map.get(pid, 0), int(doc.get("inquiry_count") or 0))
+
+            # ML Trending Score: weighted combination of sales, orders, inquiries and trending flag
+            trending_score = round(
+                (sales_cnt * 10.0) + (order_cnt * 5.0) + (inquiry_cnt * 2.0) + (5.0 if doc.get("is_trending") else 0.0),
+                2
+            )
 
             items.append({
                 "id": pid,
@@ -390,6 +437,10 @@ class ProductController:
                 "sale_tag": doc.get("sale_tag"),
                 "season": doc.get("season", "Summer"),
                 "is_trending": doc.get("is_trending", False),
+                "sales_count": sales_cnt,
+                "order_count": order_cnt,
+                "inquiry_count": inquiry_cnt,
+                "trending_score": trending_score,
                 "min_price": min_price,
                 "max_price": max_price,
                 "total_stock": total_stock,
@@ -401,6 +452,24 @@ class ProductController:
                 "updated_at": doc.get("updated_at", doc["created_at"]),
             })
         return items
+
+    @staticmethod
+    async def get_trending_products(limit: int = 12) -> List[dict]:
+        """Fetch products ranked strictly by sales count, order count, and ML demand signals."""
+        all_products = await ProductController.list_products(is_active=True, limit=200)
+
+        # Sort strictly by sales_count DESC, order_count DESC, trending_score DESC, is_trending DESC
+        sorted_products = sorted(
+            all_products,
+            key=lambda p: (
+                p.get("sales_count", 0),
+                p.get("order_count", 0),
+                p.get("trending_score", 0.0),
+                1 if p.get("is_trending") else 0,
+            ),
+            reverse=True,
+        )
+        return sorted_products[:limit]
 
     @staticmethod
     async def get_product(identifier: str) -> dict:
@@ -434,6 +503,38 @@ class ProductController:
         max_price = max(prices) if prices else 0.0
         total_stock = sum(v.get("available_quantity", 0) for v in variants)
 
+        # Single product sales aggregation
+        sales_cnt = int(doc.get("sales_count") or 0)
+        order_cnt = int(doc.get("order_count") or 0)
+        inquiry_cnt = int(doc.get("inquiry_count") or 0)
+        try:
+            pid_str = str(doc["_id"])
+            agg_res = await db["orders"].aggregate([
+                {"$unwind": "$items"},
+                {"$match": {"items.product_id": pid_str}},
+                {
+                    "$group": {
+                        "_id": "$items.product_id",
+                        "sales_count": {"$sum": {"$ifNull": ["$items.quantity", 1]}},
+                        "order_count": {"$sum": 1},
+                    }
+                }
+            ]).to_list(1)
+            if agg_res:
+                sales_cnt = max(sales_cnt, int(agg_res[0].get("sales_count", 0)))
+                order_cnt = max(order_cnt, int(agg_res[0].get("order_count", 0)))
+
+            d_doc = await db["product_demand"].find_one({"product_id": pid_str})
+            if d_doc:
+                inquiry_cnt = max(inquiry_cnt, int(d_doc.get("inquiry_count", 0)))
+        except Exception:
+            pass
+
+        trending_score = round(
+            (sales_cnt * 10.0) + (order_cnt * 5.0) + (inquiry_cnt * 2.0) + (5.0 if doc.get("is_trending") else 0.0),
+            2
+        )
+
         return {
             "id": str(doc["_id"]),
             "name": doc["name"],
@@ -449,6 +550,10 @@ class ProductController:
             "sale_tag": doc.get("sale_tag"),
             "season": doc.get("season", "Summer"),
             "is_trending": doc.get("is_trending", False),
+            "sales_count": sales_cnt,
+            "order_count": order_cnt,
+            "inquiry_count": inquiry_cnt,
+            "trending_score": trending_score,
             "min_price": min_price,
             "max_price": max_price,
             "total_stock": total_stock,

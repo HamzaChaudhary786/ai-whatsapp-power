@@ -19,6 +19,9 @@ class ProductModel(BaseModel):
     sale_tag: Optional[str] = Field(default=None, description="Promotional sale badge text")
     season: Optional[str] = Field(default="Summer", description="Season collection (e.g. Summer, Spring, All-Season)")
     is_trending: bool = Field(default=False, description="Flag for trending / bestselling showcase")
+    sales_count: Optional[int] = Field(default=0, description="Total units sold across confirmed orders")
+    order_count: Optional[int] = Field(default=0, description="Total number of customer orders placed")
+    trending_score: Optional[float] = Field(default=0.0, description="Composite ML demand and sales velocity score")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -94,6 +97,9 @@ class ProductResponse(BaseModel):
     sale_tag: Optional[str] = None
     season: Optional[str] = "Summer"
     is_trending: bool = False
+    sales_count: Optional[int] = 0
+    order_count: Optional[int] = 0
+    trending_score: Optional[float] = 0.0
     created_at: datetime
     updated_at: datetime
 
