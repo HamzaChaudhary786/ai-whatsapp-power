@@ -65,6 +65,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    if isinstance(exc, HTTPException):
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    import traceback
+    print(f"[ERROR] Uncaught exception at {request.url.path}: {exc}")
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": f"Database / Server Error: {str(exc)}",
+            "error_type": type(exc).__name__,
+            "path": str(request.url.path),
+        },
+    )
+
 # Include All Routers under /api/v1
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(user_router, prefix="/api/v1")
@@ -114,10 +132,29 @@ async def direct_handle_webhook(request: Request, background_tasks: BackgroundTa
 @app.get("/health", tags=["Health"])
 @app.get("/api/v1/health", tags=["Health"])
 async def health_check():
+    db_status = "connected"
+    db_error = None
+    product_count = 0
+    try:
+        from db.mongodb import get_database
+        database = get_database()
+        await database.client.admin.command("ping")
+        product_count = await database["products"].count_documents({})
+    except Exception as e:
+        db_status = "disconnected"
+        db_error = str(e)
+
+    raw_url = settings.DATABASE_URL or ""
+    is_localhost = "localhost" in raw_url or "127.0.0.1" in raw_url
+    masked_target = "localhost (NOT CONFIGURED ON RENDER)" if is_localhost else (raw_url.split("@")[-1].split("?")[0] if "@" in raw_url else "configured")
+
     return {
-        "status": "healthy",
+        "status": "healthy" if db_status == "connected" else "database_disconnected",
         "app": settings.APP_NAME,
-        "database": "MongoDB",
+        "database": db_status,
+        "database_target": masked_target,
+        "database_error": db_error,
+        "products_in_db": product_count,
         "env": settings.APP_ENV,
     }
 
