@@ -950,13 +950,13 @@ export default function Products({ user, onNavigateToCategories }) {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: selectedProduct ? '1fr 440px' : '1fr', gap: '20px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: selectedProduct ? 'minmax(0, 1fr) 420px' : '1fr', gap: '20px', alignItems: 'start' }}>
           {/* Products Grid */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: selectedProduct ? 'repeat(auto-fill, minmax(240px, 1fr))' : 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '18px',
+              gridTemplateColumns: selectedProduct ? 'repeat(auto-fill, minmax(310px, 1fr))' : 'repeat(auto-fill, minmax(360px, 1fr))',
+              gap: '20px',
             }}
           >
             {filteredProducts.map((p) => {
@@ -1066,7 +1066,7 @@ export default function Products({ user, onNavigateToCategories }) {
 
                   {/* Body Content */}
                   <div className="product-body" style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                       <span
                         style={{
                           fontSize: '0.72rem',
@@ -1081,7 +1081,7 @@ export default function Products({ user, onNavigateToCategories }) {
                       >
                         {p.category}
                       </span>
-                      <div style={{ textAlign: 'right' }}>
+                      <div style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                         {p.is_on_sale && p.sale_price ? (
                           <div>
                             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textDecoration: 'line-through', marginRight: '5px' }}>
@@ -1145,11 +1145,11 @@ export default function Products({ user, onNavigateToCategories }) {
                     </div>
 
                     {/* Card Actions */}
-                    <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px' }}>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px' }}>
                       <button
                         type="button"
                         className={`btn ${isSelected ? 'btn-primary' : 'btn-secondary'}`}
-                        style={{ flex: 1, fontSize: '0.78rem', padding: '6px 10px', justifyContent: 'center' }}
+                        style={{ flex: 1, minWidth: '110px', fontSize: '0.78rem', padding: '7px 10px', justifyContent: 'center', whiteSpace: 'nowrap' }}
                         onClick={() => handleSelectProduct(p.slug || p.id)}
                       >
                         <SlidersHorizontal size={14} />
@@ -1158,7 +1158,7 @@ export default function Products({ user, onNavigateToCategories }) {
                       <button
                         type="button"
                         className="btn btn-secondary"
-                        style={{ padding: '6px 8px' }}
+                        style={{ padding: '7px 10px', flexShrink: 0 }}
                         onClick={() => openEditProductModal(p)}
                         title="Edit product info"
                       >
@@ -1167,7 +1167,7 @@ export default function Products({ user, onNavigateToCategories }) {
                       <button
                         type="button"
                         className="btn btn-secondary"
-                        style={{ padding: '6px 8px', color: '#f87171' }}
+                        style={{ padding: '7px 10px', color: '#f87171', flexShrink: 0 }}
                         onClick={() => setProductToDelete(p)}
                         title="Delete product"
                       >

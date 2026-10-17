@@ -3390,8 +3390,8 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                       </div>
                     )}
 
-                    <div className="product-card-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '14px' }}>
-                      <div className="product-price-tag" style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    <div className="product-card-footer">
+                      <div className="product-price-tag">
                         <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>
                           PKR {pricing.effectivePrice.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
@@ -3400,18 +3400,26 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                             PKR {pricing.originalPrice.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         )}
+                        {pricing.isOnSale && pricing.discountPercent ? (
+                          <span style={{ fontSize: '0.72rem', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.35)', padding: '2px 7px', borderRadius: '4px', fontWeight: 700 }}>
+                            SAVE {pricing.discountPercent}%
+                          </span>
+                        ) : null}
                       </div>
-                      <div style={{ display: 'flex', gap: '6px' }}>
+                      <div className="product-card-actions-row">
                         <button
+                          type="button"
                           className="btn btn-secondary store-order-wa-btn"
                           onClick={() => handleOpenProductDetails(p)}
                           title="Quick View & Paired Outfits"
-                          style={{ padding: '8px 10px' }}
+                          style={{ padding: '8px 11px', flexShrink: 0 }}
                         >
-                          <Eye size={14} />
+                          <Eye size={15} />
                         </button>
                         <button
+                          type="button"
                           className="btn btn-secondary store-order-wa-btn"
+                          style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}
                           onClick={() => {
                             handleSendChatMessage(`Tell me more about ${p.name}`);
                             const el = document.getElementById('stylist-chat-box');
@@ -3422,7 +3430,9 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                           <span>Style Advice</span>
                         </button>
                         <button
+                          type="button"
                           className="btn btn-primary store-order-wa-btn"
+                          style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}
                           onClick={() => addToCart(p)}
                         >
                           <Plus size={14} />
@@ -3459,7 +3469,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
               Clear History
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
             {recentlyViewed.map((rv) => {
               const pricing = getProductPricing(rv);
               return (

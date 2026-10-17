@@ -1182,9 +1182,9 @@ export default function Catalog() {
           </div>
 
           {/* Main 2-Column Catalog & Detail Pane */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: selectedProduct ? 'minmax(0, 1fr) 420px' : '1fr', gap: '24px' }}>
             {/* Products Grid */}
-            <div className="products-grid">
+            <div className="products-grid" style={{ gridTemplateColumns: selectedProduct ? 'repeat(auto-fill, minmax(320px, 1fr))' : 'repeat(auto-fill, minmax(360px, 1fr))' }}>
               {filteredProducts.length === 0 ? (
                 <div className="glass-card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '64px 24px' }}>
                   <Package size={52} style={{ color: 'var(--text-dim)', marginBottom: '14px' }} />
@@ -1269,7 +1269,7 @@ export default function Catalog() {
                         }}
                       />
                       <div className="product-body" style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                           <span
                             style={{
                               fontSize: '0.72rem',
@@ -1284,7 +1284,7 @@ export default function Catalog() {
                           >
                             {p.category}
                           </span>
-                          <div style={{ textAlign: 'right' }}>
+                          <div style={{ textAlign: 'right', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                             {p.is_on_sale && p.sale_price ? (
                               <div>
                                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textDecoration: 'line-through', marginRight: '5px' }}>
@@ -1348,7 +1348,8 @@ export default function Catalog() {
                         <div
                           style={{
                             display: 'flex',
-                            gap: '6px',
+                            gap: '8px',
+                            flexWrap: 'wrap',
                             marginTop: '10px',
                             paddingTop: '8px',
                             borderTop: '1px dashed rgba(255,255,255,0.08)',
@@ -1357,7 +1358,7 @@ export default function Catalog() {
                           <button
                             type="button"
                             className="btn btn-secondary"
-                            style={{ flex: 1, padding: '5px 8px', fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                            style={{ flex: 1, minWidth: '90px', padding: '6px 10px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', whiteSpace: 'nowrap', flexShrink: 0 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               openEditProductModal(p);
@@ -1370,7 +1371,7 @@ export default function Catalog() {
                           <button
                             type="button"
                             className="btn btn-danger"
-                            style={{ padding: '5px 10px', fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                            style={{ padding: '6px 12px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', whiteSpace: 'nowrap', flexShrink: 0 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               setProductToDelete(p);

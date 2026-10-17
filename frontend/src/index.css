@@ -777,7 +777,7 @@ textarea.form-input {
 /* Product Cards Grid */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 26px;
 }
 
@@ -2288,7 +2288,7 @@ textarea.form-input {
 
 .storefront-products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 28px;
 }
 
@@ -2347,21 +2347,36 @@ textarea.form-input {
 
 .product-card-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%;
 }
 
 .product-price-tag {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
   font-size: 1.25rem;
   font-weight: 800;
   color: #10b981;
+  width: 100%;
+}
+
+.product-card-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .store-order-wa-btn {
-  padding: 8px 14px;
+  padding: 8px 12px;
   font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .storefront-footer {
@@ -4678,7 +4693,7 @@ textarea.form-input {
 }
 
 .curated-shelf-card {
-  flex: 0 0 340px;
+  flex: 0 0 380px;
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -4856,6 +4871,8 @@ textarea.form-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -4863,6 +4880,7 @@ textarea.form-input {
 .shelf-price-box {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
@@ -4882,6 +4900,7 @@ textarea.form-input {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .btn-shelf-action {
