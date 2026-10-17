@@ -77,6 +77,15 @@ async def global_exception_handler(request: Request, exc: Exception):
             content={"detail": exc.detail},
             headers=headers,
         )
+    if "SSL handshake failed" in str(exc) or "ServerSelectionTimeoutError" in type(exc).__name__:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "detail": "MongoDB connection error: Render server IP is not whitelisted. Please add 0.0.0.0/0 to MongoDB Atlas -> Network Access.",
+                "error_type": type(exc).__name__,
+                "path": str(request.url.path),
+            },
+        )
     import traceback
     print(f"[ERROR] Uncaught exception at {request.url.path}: {exc}")
     traceback.print_exc()

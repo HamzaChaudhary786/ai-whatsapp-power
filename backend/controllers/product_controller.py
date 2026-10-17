@@ -337,8 +337,13 @@ class ProductController:
         if is_active is not None:
             query["is_active"] = is_active
 
-        cursor = db["products"].find(query, {"embedding": 0}).sort("created_at", -1).skip(skip).limit(limit)
-        docs = [doc async for doc in cursor]
+        try:
+            cursor = db["products"].find(query, {"embedding": 0}).sort("created_at", -1).skip(skip).limit(limit)
+            docs = [doc async for doc in cursor]
+        except Exception as e:
+            print(f"[ERROR] ProductController.list_products DB error: {e}")
+            return []
+
         if not docs:
             return []
 

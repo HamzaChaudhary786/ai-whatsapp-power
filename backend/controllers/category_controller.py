@@ -23,31 +23,35 @@ class CategoryController:
         db = get_database()
         query = {} if include_inactive else {"is_active": True}
 
-        # Seed defaults if collection has no items
-        count = await db["categories"].count_documents({})
-        if count == 0:
-            await CategoryController.seed_default_categories()
+        try:
+            # Seed defaults if collection has no items
+            count = await db["categories"].count_documents({})
+            if count == 0:
+                await CategoryController.seed_default_categories()
 
-        cursor = db["categories"].find(query).sort([("display_order", 1), ("name", 1)])
-        categories = []
-        async for doc in cursor:
-            cat_name = doc["name"]
-            # Count products belonging to this category
-            prod_count = await db["products"].count_documents({"category": cat_name})
-            categories.append({
-                "id": str(doc["_id"]),
-                "name": doc["name"],
-                "slug": doc["slug"],
-                "description": doc.get("description"),
-                "image_url": doc.get("image_url"),
-                "icon": doc.get("icon", "Sparkles"),
-                "display_order": doc.get("display_order", 0),
-                "is_active": doc.get("is_active", True),
-                "product_count": prod_count,
-                "created_at": doc.get("created_at", datetime.now(timezone.utc)),
-                "updated_at": doc.get("updated_at", datetime.now(timezone.utc)),
-            })
-        return categories
+            cursor = db["categories"].find(query).sort([("display_order", 1), ("name", 1)])
+            categories = []
+            async for doc in cursor:
+                cat_name = doc["name"]
+                # Count products belonging to this category
+                prod_count = await db["products"].count_documents({"category": cat_name})
+                categories.append({
+                    "id": str(doc["_id"]),
+                    "name": doc["name"],
+                    "slug": doc["slug"],
+                    "description": doc.get("description"),
+                    "image_url": doc.get("image_url"),
+                    "icon": doc.get("icon", "Sparkles"),
+                    "display_order": doc.get("display_order", 0),
+                    "is_active": doc.get("is_active", True),
+                    "product_count": prod_count,
+                    "created_at": doc.get("created_at", datetime.now(timezone.utc)),
+                    "updated_at": doc.get("updated_at", datetime.now(timezone.utc)),
+                })
+            return categories
+        except Exception as e:
+            print(f"[ERROR] CategoryController.list_categories DB error: {e}")
+            return []
 
     @staticmethod
     async def get_category(identifier: str) -> dict:
