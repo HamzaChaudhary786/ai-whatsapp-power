@@ -878,11 +878,11 @@ export default function Analytics() {
   };
 
   return (
-    <div style={{ padding: '24px 32px', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div className="analytics-page-container">
       {/* ======================================================== */}
       {/* 1. TOP HEADER & DATE RANGE SELECTOR                      */}
       {/* ======================================================== */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="analytics-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontSize: '0.82rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             <Activity size={16} />
@@ -897,9 +897,9 @@ export default function Analytics() {
         </div>
 
         {/* Global Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <div className="analytics-header-controls" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           {/* Time Range Pills */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-glass)' }}>
+          <div className="analytics-time-pills-bar" style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-glass)' }}>
             {[
               { id: '7D', label: '7 Days' },
               { id: '30D', label: '30 Days' },
@@ -968,6 +968,7 @@ export default function Analytics() {
       {/* 2. TOP EXECUTIVE PERFORMANCE KPIS                        */}
       {/* ======================================================== */}
       <div
+        className="analytics-kpi-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
@@ -1207,7 +1208,7 @@ export default function Analytics() {
       {/* ======================================================== */}
       {/* 4. TWO-COLUMN: CATEGORY DONUT & ORDER PIPELINE BAR       */}
       {/* ======================================================== */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '20px', marginBottom: '28px' }}>
+      <div className="analytics-charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '20px', marginBottom: '28px' }}>
         {/* Chart A: Category Revenue Donut Chart */}
         <div className="glass-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#818cf8', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>
@@ -1390,7 +1391,7 @@ export default function Analytics() {
         </div>
 
         {/* Table */}
-        <div style={{ overflowX: 'auto', border: '1px solid var(--border-glass)', borderRadius: 'var(--radius-md)' }}>
+        <div className="table-responsive-wrapper" style={{ overflowX: 'auto', border: '1px solid var(--border-glass)', borderRadius: 'var(--radius-md)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
             <thead>
               <tr style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>

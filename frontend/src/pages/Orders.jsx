@@ -340,9 +340,9 @@ export default function Orders() {
   });
 
   return (
-    <div>
+    <div className="orders-page-container">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Orders, Logistics & Courier Dispatch</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
@@ -350,9 +350,9 @@ export default function Orders() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="orders-header-actions" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
           {/* Live Search Input */}
-          <div style={{ position: 'relative', minWidth: '240px' }}>
+          <div className="orders-search-wrap" style={{ position: 'relative', minWidth: '240px' }}>
             <Search size={15} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
@@ -366,7 +366,7 @@ export default function Orders() {
 
           {/* Action: Staff Manual Order */}
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-take-order-mobile"
             style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', padding: '8px 16px' }}
             onClick={() => setIsCreateModalOpen(true)}
           >
@@ -375,7 +375,7 @@ export default function Orders() {
           </button>
 
           {/* Filter Pills */}
-          <div style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
+          <div className="orders-filter-scroll-bar" style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
             {['ALL', 'PENDING', 'CONFIRMED', 'SHIPPED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'RETURNS', 'CANCELLED'].map((st) => (
               <button
                 key={st}
@@ -403,7 +403,7 @@ export default function Orders() {
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}
         >
           <div
-            className="glass-card"
+            className="glass-card modal-dialog"
             onClick={(e) => e.stopPropagation()}
             style={{ width: '100%', maxWidth: '580px', padding: '28px', maxHeight: '90vh', overflowY: 'auto' }}
           >
@@ -643,7 +643,7 @@ export default function Orders() {
       {/* Courier Booking Modal */}
       {isCourierModalOpen && selectedOrderForCourier && (
         <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
-          <div className="glass-card" style={{ width: '100%', maxWidth: '580px', padding: '28px', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="glass-card modal-dialog" style={{ width: '100%', maxWidth: '580px', padding: '28px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.2)', borderRadius: '8px', color: 'var(--primary)' }}>
@@ -778,7 +778,7 @@ export default function Orders() {
       {/* Live Parcel Tracking Modal */}
       {isTrackingModalOpen && (
         <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
-          <div className="glass-card" style={{ width: '100%', maxWidth: '640px', padding: '28px', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="glass-card modal-dialog" style={{ width: '100%', maxWidth: '640px', padding: '28px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '8px', color: '#10b981' }}>
@@ -916,7 +916,7 @@ export default function Orders() {
       {/* Airway Bill (AWB) Consignment Slip Modal */}
       {isSlipModalOpen && slipData && (
         <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
-          <div className="glass-card" style={{ width: '100%', maxWidth: '620px', padding: '28px', maxHeight: '90vh', overflowY: 'auto', background: '#0b1120', color: '#f8fafc' }}>
+          <div className="glass-card modal-dialog" style={{ width: '100%', maxWidth: '620px', padding: '28px', maxHeight: '90vh', overflowY: 'auto', background: '#0b1120', color: '#f8fafc' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
               <div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Official Consignment Note (AWB Slip)</h3>
@@ -1053,7 +1053,7 @@ export default function Orders() {
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <div className="order-card-actions-bar" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   {/* Status Pill */}
                   <span
                     style={{

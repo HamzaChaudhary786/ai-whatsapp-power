@@ -248,7 +248,7 @@ export default function Campaigns() {
   const emailAudience = customers.filter((c) => c.email).length;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="campaigns-page-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header with Navigation Switcher */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -262,7 +262,7 @@ export default function Campaigns() {
         </div>
 
         {/* Tab Switcher */}
-        <div style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)' }}>
+        <div className="campaigns-tab-switcher" style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)' }}>
           <button
             type="button"
             className="btn"
@@ -474,7 +474,7 @@ export default function Campaigns() {
           {/* Create Coupon Modal */}
           {isCouponModalOpen && (
             <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
-              <div className="glass-card" style={{ width: '100%', maxWidth: '520px', padding: '26px' }}>
+              <div className="glass-card modal-dialog" style={{ width: '100%', maxWidth: '520px', padding: '26px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Ticket size={20} style={{ color: 'var(--primary)' }} />
@@ -598,7 +598,7 @@ export default function Campaigns() {
       {activeTab === 'BROADCASTS' && (
         <>
           {/* Audience Overview Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+          <div className="campaigns-audience-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         <div className="glass-card" style={{ padding: '18px', display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
             <Users size={24} />
@@ -679,7 +679,7 @@ export default function Campaigns() {
       )}
 
       {/* Main Campaign Composer & Live Previews Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '20px' }}>
+      <div className="campaigns-composer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '20px' }}>
         {/* Left: Compose Form */}
         <div className="glass-card" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '18px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '10px' }}>
@@ -754,7 +754,7 @@ export default function Campaigns() {
             {/* Channels Selection */}
             <div>
               <label className="form-label" style={{ fontSize: '0.8rem' }}>Dispatch Channels</label>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
+              <div className="campaigns-channels-row" style={{ display: 'flex', gap: '12px', marginTop: '6px' }}>
                 <label
                   style={{
                     display: 'flex',

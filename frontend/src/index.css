@@ -7204,3 +7204,496 @@ html, body {
   border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
+/* ==========================================================================
+   17. UNIVERSAL TABLE RESPONSIVE WRAPPER
+   ========================================================================== */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 8px;
+  position: relative;
+  border-radius: 8px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar {
+  height: 5px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   18. OVERVIEW / DASHBOARD RESPONSIVENESS
+   ========================================================================== */
+.overview-hero-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .overview-hero-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    padding: 18px 16px !important;
+  }
+
+  .overview-hero-card .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 44px !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .stat-card {
+    padding: 14px 12px !important;
+  }
+
+  .stat-info .stat-value {
+    font-size: 1.35rem !important;
+    word-break: break-word !important;
+  }
+
+  .stat-icon-wrapper {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .stat-icon-wrapper svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   19. ORDERS, LOGISTICS & FULFILLMENT DESK RESPONSIVENESS
+   ========================================================================== */
+.orders-page-container {
+  width: 100%;
+}
+
+.orders-filter-scroll-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px;
+  scrollbar-width: none;
+}
+
+.orders-filter-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .orders-header-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .orders-search-wrap {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .orders-search-wrap .form-input {
+    width: 100% !important;
+    font-size: 16px !important;
+    min-height: 42px !important;
+  }
+
+  .btn-take-order-mobile {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+
+  .orders-filter-scroll-bar {
+    width: 100% !important;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  .orders-filter-scroll-bar .btn {
+    flex-shrink: 0 !important;
+    padding: 6px 12px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .order-card-actions-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+
+  .order-card-actions-bar > * {
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 0.74rem !important;
+    padding: 6px 8px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  .order-card-actions-bar .btn-primary {
+    grid-column: 1 / -1 !important;
+    min-height: 42px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ==========================================================================
+   20. LIVE WHATSAPP INBOX (STAFF & ADMIN DESK) RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 768px) {
+  .chat-container {
+    height: calc(100dvh - 146px) !important;
+    max-height: calc(100dvh - 146px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+  }
+
+  .chat-container.has-active .chat-sidebar {
+    display: none !important;
+  }
+
+  .chat-container.has-active .chat-main {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .chat-container:not(.has-active) .chat-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .chat-container:not(.has-active) .chat-main {
+    display: none !important;
+  }
+
+  .chat-header {
+    height: auto !important;
+    min-height: unset !important;
+    padding: 10px 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .live-chat-header-identity {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .live-chat-header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+
+  .live-chat-header-actions .reassign-dropdown-wrap {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .live-chat-header-actions .reassign-select {
+    width: 100% !important;
+    font-size: 16px !important;
+    min-height: 38px !important;
+  }
+
+  .live-chat-header-actions .btn-resolve-ai {
+    grid-column: span 1 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 0.74rem !important;
+    justify-content: center !important;
+    padding: 6px 8px !important;
+  }
+
+  .live-chat-header-actions .btn-assign-me {
+    grid-column: span 1 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 0.74rem !important;
+    justify-content: center !important;
+  }
+
+  .chat-filter-tabs-scroll {
+    display: flex !important;
+    gap: 4px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 8px 10px !important;
+  }
+
+  .chat-filter-tabs-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chat-filter-tabs-scroll button {
+    flex-shrink: 0 !important;
+  }
+
+  .chat-messages {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 12px 10px !important;
+  }
+
+  .chat-input-bar,
+  .chat-input-area {
+    flex-shrink: 0 !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    background: rgba(15, 22, 36, 0.98) !important;
+  }
+
+  .chat-input-bar input,
+  .chat-input-area input {
+    font-size: 16px !important;
+    min-height: 42px !important;
+  }
+}
+
+/* ==========================================================================
+   21. SALES & ANALYTICS STUDIO RESPONSIVENESS
+   ========================================================================== */
+.analytics-page-container {
+  width: 100%;
+}
+
+.analytics-time-pills-bar {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.analytics-time-pills-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .analytics-header-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .analytics-header-controls {
+    display: grid !important;
+    grid-template-columns: 1fr auto auto !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .analytics-time-pills-bar {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .analytics-time-pills-bar button {
+    flex: 1 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 6px 8px !important;
+  }
+
+  .analytics-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .analytics-charts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* ==========================================================================
+   22. SALE BROADCAST & PROMO COUPONS RESPONSIVENESS
+   ========================================================================== */
+.campaigns-page-container {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .campaigns-tab-switcher {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+
+  .campaigns-tab-switcher .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: 0.74rem !important;
+    padding: 8px 4px !important;
+    text-align: center !important;
+  }
+
+  .campaigns-audience-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .campaigns-composer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .campaigns-channels-row {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .campaigns-channels-row label {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ==========================================================================
+   23. FAQ KNOWLEDGE BASE RESPONSIVENESS
+   ========================================================================== */
+.faq-page-container {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .faq-header-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .btn-add-faq-mobile {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+
+  .faq-search-form {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .faq-search-form input {
+    width: 100% !important;
+    font-size: 16px !important;
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+  }
+
+  .faq-search-form .btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+
+  .faq-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ==========================================================================
+   24. STAFF & TEAM MANAGEMENT RESPONSIVENESS
+   ========================================================================== */
+.team-page-container {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .btn-add-staff-mobile {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+
+  .team-overview-cards {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .team-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .team-filter-bar > div:first-child {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .team-filter-bar .form-input {
+    width: 100% !important;
+    font-size: 16px !important;
+    min-height: 42px !important;
+  }
+
+  .team-filter-bar > div:last-child {
+    display: flex !important;
+    width: 100% !important;
+  }
+
+  .team-filter-bar > div:last-child .btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 7px 4px !important;
+    font-size: 0.74rem !important;
+  }
+}
+
+

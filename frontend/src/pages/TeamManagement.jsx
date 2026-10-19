@@ -134,7 +134,7 @@ export default function TeamManagement({ currentUser }) {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="team-page-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -148,7 +148,7 @@ export default function TeamManagement({ currentUser }) {
         </div>
 
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-add-staff-mobile"
           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px' }}
           onClick={() => setIsAddModalOpen(true)}
         >
@@ -158,7 +158,7 @@ export default function TeamManagement({ currentUser }) {
       </div>
 
       {/* Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div className="team-overview-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
         <div className="glass-card" style={{ padding: '18px', display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8' }}>
             <Shield size={22} />
@@ -197,7 +197,7 @@ export default function TeamManagement({ currentUser }) {
       </div>
 
       {/* Filter and Search Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+      <div className="team-filter-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, maxWidth: '340px' }}>
           <div className="input-with-icon" style={{ width: '100%' }}>
             <Search size={16} className="input-icon" />
@@ -237,7 +237,7 @@ export default function TeamManagement({ currentUser }) {
       {/* Add Staff Member Modal */}
       {isAddModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content-card">
+          <div className="modal-content-card modal-dialog">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px' }}>
               <div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Add New Team Member</h3>
@@ -362,7 +362,8 @@ export default function TeamManagement({ currentUser }) {
 
       {/* Users Table */}
       <div className="glass-card" style={{ padding: '0', overflow: 'hidden' }}>
-        <table className="custom-table">
+        <div className="table-responsive-wrapper">
+          <table className="custom-table">
           <thead>
             <tr>
               <th>Member Details</th>
@@ -466,11 +467,12 @@ export default function TeamManagement({ currentUser }) {
             )}
           </tbody>
         </table>
+        </div>
       </div>
       {/* Delete Account Confirmation Modal */}
       {userToDelete && (
         <div className="modal-overlay" style={{ zIndex: 1200 }}>
-          <div className="modal-content-card" style={{ maxWidth: '440px', padding: '24px' }}>
+          <div className="modal-content-card modal-dialog" style={{ maxWidth: '440px', padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
                 <Trash2 size={20} />

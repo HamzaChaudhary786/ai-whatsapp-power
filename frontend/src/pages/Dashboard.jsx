@@ -105,13 +105,10 @@ export default function Dashboard({ setActiveTab }) {
 
       {/* Hero Action Card */}
       <div
-        className="glass-card"
+        className="glass-card overview-hero-card"
         style={{
           background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)',
           marginBottom: '28px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
         }}
       >
         <div>
@@ -136,7 +133,7 @@ export default function Dashboard({ setActiveTab }) {
 
       {/* Recent Orders Overview */}
       <div className="glass-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
           <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Recent Customer Orders</h3>
           <button className="btn btn-secondary" onClick={() => setActiveTab('orders')} style={{ fontSize: '0.82rem', padding: '6px 14px' }}>
             View All Orders
@@ -148,43 +145,45 @@ export default function Dashboard({ setActiveTab }) {
             No orders placed yet. Orders created via WhatsApp will appear here automatically.
           </div>
         ) : (
-          <table className="custom-table">
-            <thead>
-              <tr>
-                <th>Order Number</th>
-                <th>Customer ID</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((ord) => (
-                <tr key={ord.id}>
-                  <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{ord.order_number}</td>
-                  <td style={{ color: 'var(--text-muted)' }}>{ord.customer_id.slice(-6)}...</td>
-                  <td>{ord.items?.length || 0} item(s)</td>
-                  <td style={{ fontWeight: 700 }}>PKR {ord.total?.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td>
-                    <span
-                      style={{
-                        padding: '4px 10px',
-                        borderRadius: 'var(--radius-full)',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        background: ord.status === 'DELIVERED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                        color: ord.status === 'DELIVERED' ? '#10b981' : '#f59e0b',
-                      }}
-                    >
-                      {ord.status}
-                    </span>
-                  </td>
-                  <td style={{ color: 'var(--text-dim)' }}>{new Date(ord.created_at).toLocaleDateString()}</td>
+          <div className="table-responsive-wrapper">
+            <table className="custom-table">
+              <thead>
+                <tr>
+                  <th>Order Number</th>
+                  <th>Customer ID</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentOrders.map((ord) => (
+                  <tr key={ord.id}>
+                    <td style={{ fontWeight: 600, color: 'var(--primary)', whiteSpace: 'nowrap' }}>{ord.order_number}</td>
+                    <td style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{ord.customer_id.slice(-6)}...</td>
+                    <td style={{ whiteSpace: 'nowrap' }}>{ord.items?.length || 0} item(s)</td>
+                    <td style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>PKR {ord.total?.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style={{ whiteSpace: 'nowrap' }}>
+                      <span
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: 'var(--radius-full)',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          background: ord.status === 'DELIVERED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                          color: ord.status === 'DELIVERED' ? '#10b981' : '#f59e0b',
+                        }}
+                      >
+                        {ord.status}
+                      </span>
+                    </td>
+                    <td style={{ color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>{new Date(ord.created_at).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

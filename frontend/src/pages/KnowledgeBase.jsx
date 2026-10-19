@@ -51,15 +51,15 @@ export default function KnowledgeBase() {
   const displayList = searchResults !== null ? searchResults : faqs;
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
+    <div className="faq-page-container">
+      <div className="faq-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
         <div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>AI Knowledge Base & FAQs</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
             Approved policy answers retrieved by the assistant when customers ask policy & shipping questions
           </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+        <button className="btn btn-primary btn-add-faq-mobile" onClick={() => setShowAddModal(true)}>
           <Plus size={18} />
           <span>Add FAQ Entry</span>
         </button>
@@ -71,11 +71,11 @@ export default function KnowledgeBase() {
           <Sparkles size={16} />
           <span style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Live RAG Query Sandbox</span>
         </div>
-        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <form onSubmit={handleSearch} className="faq-search-form" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <input
             type="text"
             className="chat-input"
-            style={{ borderRadius: 'var(--radius-md)' }}
+            style={{ borderRadius: 'var(--radius-md)', flex: '1 1 240px' }}
             placeholder="Type customer question to test full-text RAG matching (e.g. Can I return unworn dresses?)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -100,7 +100,7 @@ export default function KnowledgeBase() {
       </div>
 
       {/* FAQ Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '20px' }}>
+      <div className="faq-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
         {displayList.length === 0 ? (
           <div className="glass-card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '48px', color: 'var(--text-dim)' }}>
             <BookOpen size={40} style={{ marginBottom: '12px', opacity: 0.5 }} />
@@ -136,7 +136,7 @@ export default function KnowledgeBase() {
       {/* Add Modal */}
       {showAddModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="glass-card" style={{ width: '520px', maxWidth: '90vw' }}>
+          <div className="glass-card modal-dialog" style={{ width: '520px', maxWidth: '90vw' }}>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>Add FAQ Knowledge Base Entry</h3>
             <form onSubmit={handleCreateFaq}>
               <div style={{ marginBottom: '14px' }}>

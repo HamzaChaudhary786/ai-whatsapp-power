@@ -443,6 +443,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
 
         {/* Filter Navigation Tabs */}
         <div
+          className="chat-filter-tabs-scroll"
           style={{
             display: 'flex',
             gap: '4px',
@@ -1044,7 +1045,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
           }}
         >
           <div
-            className="glass-card"
+            className="glass-card modal-dialog"
             style={{
               width: '100%',
               maxWidth: '650px',
@@ -1184,7 +1185,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
           }}
         >
           <div
-            className="glass-card"
+            className="glass-card modal-dialog"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '100%',
