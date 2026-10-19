@@ -52,7 +52,7 @@ export default function KnowledgeBase() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
         <div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>AI Knowledge Base & FAQs</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
@@ -71,7 +71,7 @@ export default function KnowledgeBase() {
           <Sparkles size={16} />
           <span style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Live RAG Query Sandbox</span>
         </div>
-        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px' }}>
+        <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <input
             type="text"
             className="chat-input"

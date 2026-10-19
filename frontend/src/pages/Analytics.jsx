@@ -317,7 +317,7 @@ function CategoryDonutChart({ data }) {
   let accumulatedPercent = 0;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '190px 1fr', alignItems: 'center', gap: '20px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', alignItems: 'center', gap: '20px' }}>
       {/* Donut Graphic */}
       <div style={{ position: 'relative', width: `${size}px`, height: `${size}px`, margin: '0 auto' }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -1207,7 +1207,7 @@ export default function Analytics() {
       {/* ======================================================== */}
       {/* 4. TWO-COLUMN: CATEGORY DONUT & ORDER PIPELINE BAR       */}
       {/* ======================================================== */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '20px', marginBottom: '28px' }}>
         {/* Chart A: Category Revenue Donut Chart */}
         <div className="glass-card" style={{ padding: '22px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#818cf8', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>

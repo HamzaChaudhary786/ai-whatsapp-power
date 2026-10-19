@@ -15,6 +15,7 @@ import {
   Users,
   Layers,
   TrendingUp,
+  X,
 } from 'lucide-react';
 import { ThemeToggle } from '../context/ThemeContext';
 
@@ -24,6 +25,8 @@ export default function Sidebar({
   user,
   onLogout,
   onSwitchToStorefront,
+  isMobileOpen,
+  onCloseMobile,
 }) {
   const isAdmin = user?.role === 'ADMIN';
   const isStaff = user?.role === 'STAFF';
@@ -43,16 +46,28 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
       {/* Brand Section */}
       <div className="brand-section">
-        <div className="brand-logo-icon">
-          <Sparkles size={22} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+          <div className="brand-logo-icon">
+            <Sparkles size={22} />
+          </div>
+          <div>
+            <div className="brand-name">FASHION AI</div>
+            <div className="brand-sub">Admin & Staff Console</div>
+          </div>
         </div>
-        <div>
-          <div className="brand-name">FASHION AI</div>
-          <div className="brand-sub">Admin & Staff Console</div>
-        </div>
+        {onCloseMobile && (
+          <button
+            type="button"
+            className="sidebar-mobile-close-btn"
+            onClick={onCloseMobile}
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Navigation Links */}
@@ -64,7 +79,10 @@ export default function Sidebar({
             <li key={item.id}>
               <div
                 className={`nav-item ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  if (onCloseMobile) onCloseMobile();
+                }}
               >
                 <Icon size={18} className="nav-icon" />
                 <span style={{ flex: 1 }}>{item.label}</span>

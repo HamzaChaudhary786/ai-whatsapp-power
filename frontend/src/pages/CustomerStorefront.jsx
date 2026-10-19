@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   ShoppingBag,
+  ShoppingCart,
   Sparkles,
   Search,
   Send,
@@ -5404,6 +5405,85 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
           </div>
         </div>
       </footer>
+
+      {/* Luxury Mobile App Bottom Navigation Bar */}
+      <nav className="storefront-mobile-bottom-nav" aria-label="Mobile Navigation">
+        <button
+          type="button"
+          className="mobile-nav-item"
+          onClick={() => {
+            const el = document.getElementById('catalog-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          title="Browse Catalog"
+        >
+          <ShoppingBag size={20} />
+          <span>Catalog</span>
+        </button>
+
+        <button
+          type="button"
+          className="mobile-nav-item"
+          onClick={() => {
+            const el = document.getElementById('sale-showcase-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          title="Flash Sale Outfits"
+        >
+          <div className="mobile-nav-icon-wrap">
+            <Flame size={20} style={{ color: '#ef4444' }} />
+            <span className="mobile-nav-mini-badge">HOT</span>
+          </div>
+          <span>Sale</span>
+        </button>
+
+        <button
+          type="button"
+          className="mobile-nav-item mobile-nav-stylist-highlight"
+          onClick={() => {
+            const el = document.getElementById('stylist-chat-box');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          title="Ask AI Stylist Aria"
+        >
+          <div className="mobile-stylist-fab-icon">
+            <Sparkles size={20} />
+          </div>
+          <span style={{ color: 'var(--primary)', fontWeight: 800 }}>AI Stylist</span>
+        </button>
+
+        <button
+          type="button"
+          className="mobile-nav-item"
+          onClick={() => setIsWishlistOpen(true)}
+          title="Saved Outfits"
+        >
+          <div className="mobile-nav-icon-wrap">
+            <Heart size={20} style={{ color: wishlist.length > 0 ? '#ef4444' : 'currentColor' }} fill={wishlist.length > 0 ? '#ef4444' : 'none'} />
+            {wishlist.length > 0 && (
+              <span className="mobile-nav-count-badge badge-red">{wishlist.length}</span>
+            )}
+          </div>
+          <span>Wishlist</span>
+        </button>
+
+        <button
+          type="button"
+          className="mobile-nav-item"
+          onClick={() => setIsCartOpen(true)}
+          title="Shopping Bag"
+        >
+          <div className="mobile-nav-icon-wrap">
+            <ShoppingCart size={20} />
+            {totalCartCount > 0 && (
+              <span className="mobile-nav-count-badge badge-primary">{totalCartCount}</span>
+            )}
+          </div>
+          <span>Bag</span>
+        </button>
+      </nav>
+
       {/* Floating Theme Switcher Widget */}
       <ThemeToggle variant="floating" />
     </div>

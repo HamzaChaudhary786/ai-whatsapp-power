@@ -22,6 +22,7 @@ import {
   X,
   Search,
   CheckCircle,
+  ChevronLeft,
 } from 'lucide-react';
 import { api } from '../api/client';
 
@@ -413,7 +414,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
   });
 
   return (
-    <div className="chat-container">
+    <div className={`chat-container ${activeConv ? 'has-active' : ''}`}>
       {/* Left Conversations Sidebar */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">
@@ -624,9 +625,20 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
         {activeConv ? (
           <>
             <div className="chat-header">
-              <div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>{activeConv.customer_name || 'Customer'}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  type="button"
+                  className="chat-mobile-back-btn"
+                  onClick={() => setActiveConv(null)}
+                  title="Back to conversation list"
+                  aria-label="Back to conversations"
+                >
+                  <ChevronLeft size={18} />
+                  <span>Chats</span>
+                </button>
+                <div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>{activeConv.customer_name || 'Customer'}</span>
                   {activeConv.customer_phone && (
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                       ({activeConv.customer_phone})
@@ -651,6 +663,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   Channel: {activeConv.channel === 'web_chat' ? 'Web AI Stylist' : 'WhatsApp Cloud API'} • ID: {activeConv.id}
                 </span>
               </div>
+            </div>
 
               {/* Staff Reassignment Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

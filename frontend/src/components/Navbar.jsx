@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RefreshCw, Shield, UserCheck, ExternalLink, LogOut } from 'lucide-react';
+import { RefreshCw, Shield, UserCheck, ExternalLink, LogOut, Menu } from 'lucide-react';
 import { api } from '../api/client';
 import { ThemeToggle } from '../context/ThemeContext';
 
@@ -8,6 +8,7 @@ export default function Navbar({
   user,
   onLogout,
   onSwitchToStorefront,
+  onToggleMobileSidebar,
 }) {
   const [health, setHealth] = useState({ status: 'connecting', database: 'MongoDB' });
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -33,6 +34,17 @@ export default function Navbar({
   return (
     <header className="top-navbar">
       <div className="nav-left">
+        {onToggleMobileSidebar && (
+          <button
+            type="button"
+            className="mobile-sidebar-toggle-btn"
+            onClick={onToggleMobileSidebar}
+            aria-label="Toggle navigation menu"
+            title="Open Menu"
+          >
+            <Menu size={20} />
+          </button>
+        )}
         <h1 className="nav-title">{activeTitle}</h1>
       </div>
 

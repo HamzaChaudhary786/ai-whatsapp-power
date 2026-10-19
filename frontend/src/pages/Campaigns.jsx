@@ -679,7 +679,7 @@ export default function Campaigns() {
       )}
 
       {/* Main Campaign Composer & Live Previews Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '20px' }}>
         {/* Left: Compose Form */}
         <div className="glass-card" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '18px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '10px' }}>

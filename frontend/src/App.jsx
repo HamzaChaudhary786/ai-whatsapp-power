@@ -55,6 +55,7 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleLoginSuccess = (authenticatedUser) => {
     setUser(authenticatedUser);
@@ -146,12 +147,21 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {isMobileSidebarOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setIsMobileSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         user={user}
         onLogout={handleLogout}
         onSwitchToStorefront={() => setViewMode('STOREFRONT')}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
       <div className="main-content">
         <Navbar
@@ -159,6 +169,7 @@ export default function App() {
           user={user}
           onLogout={handleLogout}
           onSwitchToStorefront={() => setViewMode('STOREFRONT')}
+          onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
         />
         <main className="content-body">{renderConsoleContent()}</main>
       </div>

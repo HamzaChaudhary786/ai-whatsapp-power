@@ -950,15 +950,9 @@ export default function Products({ user, onNavigateToCategories }) {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: selectedProduct ? 'minmax(0, 1fr) 420px' : '1fr', gap: '20px', alignItems: 'start' }}>
+        <div className={`products-management-layout ${selectedProduct ? 'has-selected' : ''}`}>
           {/* Products Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: selectedProduct ? 'repeat(auto-fill, minmax(310px, 1fr))' : 'repeat(auto-fill, minmax(360px, 1fr))',
-              gap: '20px',
-            }}
-          >
+          <div className="products-admin-grid">
             {filteredProducts.map((p) => {
               const isSelected = selectedProduct?.id === p.id;
               const hasMultipleImages = p.image_urls && p.image_urls.length > 1;
@@ -1183,7 +1177,7 @@ export default function Products({ user, onNavigateToCategories }) {
           {/* Side Drawer: Variant Management */}
           {selectedProduct && (
             <div
-              className="glass-card"
+              className="glass-card product-variant-side-panel"
               style={{
                 padding: '20px',
                 position: 'sticky',
