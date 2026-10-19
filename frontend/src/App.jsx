@@ -32,8 +32,21 @@ const tabTitles = {
 
 export default function App() {
   const [user, setUser] = useState(getCurrentUser());
-  // viewMode: 'CONSOLE' | 'STOREFRONT' | 'LOGIN'
   const [viewMode, setViewMode] = useState(() => {
+    // If the visitor followed a direct product link or storefront query, prioritize STOREFRONT view
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+      const search = window.location.search;
+      const hasProductIntent = Boolean(
+        (path && path !== 'console' && path !== 'admin' && path !== 'login') ||
+        search.includes('product=') ||
+        search.includes('id=')
+      );
+      if (hasProductIntent) {
+        return 'STOREFRONT';
+      }
+    }
+
     const current = getCurrentUser();
     if (current && (current.role === 'ADMIN' || current.role === 'STAFF')) {
       return 'CONSOLE';

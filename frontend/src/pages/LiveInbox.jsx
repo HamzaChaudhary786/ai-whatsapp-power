@@ -199,12 +199,14 @@ Aap bas yeh details reply kar dein, hum foran aapka parcel confirm aur dispatch 
     }
   };
 
+  const STOREFRONT_BASE_URL = 'https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app';
+
   const handleSendProductCard = async (prod) => {
     if (!activeConv || !prod || sending) return;
     const price = prod.variants?.[0]?.price || 14000.0;
     const sizes = prod.variants ? [...new Set(prod.variants.map((v) => v.size).filter(Boolean))].join(', ') : 'S, M, L, XL';
     const colors = prod.variants ? [...new Set(prod.variants.map((v) => v.color).filter(Boolean))].join(', ') : 'Standard';
-    const img = prod.image_urls?.[0] || 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=600&q=80';
+    const prodUrl = `${STOREFRONT_BASE_URL}/${prod.id}`;
 
     const caption = 
 `✨ *${prod.name}* (${prod.category || 'Fashion'}) 👗
@@ -213,12 +215,15 @@ Aap bas yeh details reply kar dein, hum foran aapka parcel confirm aur dispatch 
 • Available Colors: ${colors || 'Standard'}
 • Details: ${prod.description || 'Premium boutique design crafted for all-day comfort.'}
 
+🌐 *View Product on Website:*
+${prodUrl}
+
 🛍️ *Order Kaise Karein:*
 Agar aap yeh outfit mangwana chahte hain, toh bas apna Name, Delivery Address aur City reply karein! Hamara live desk foran aapka Cash on Delivery order book kar dega. 🌸`;
 
     setSending(true);
     try {
-      await api.sendAgentMessage(activeConv.id, caption, img);
+      await api.sendAgentMessage(activeConv.id, caption, null);
       setIsShareModalOpen(false);
       await loadMessages(activeConv.id);
       await loadConversations();
@@ -231,20 +236,19 @@ Agar aap yeh outfit mangwana chahte hain, toh bas apna Name, Delivery Address au
 
   const handleSendCheckoutLink = async () => {
     if (!activeConv || sending) return;
-    const origin = window.location.origin;
-    const phone = activeConv.customer_phone || '';
-    const link = `${origin}/?phone=${encodeURIComponent(phone)}`;
+    const activeProdId = activeConv.active_product_id;
+    const link = activeProdId ? `${STOREFRONT_BASE_URL}/${activeProdId}` : STOREFRONT_BASE_URL;
     const text = 
-`🔗 *Direct Storefront Checkout Link* ✨
+`🔗 *Official Boutique Website Link* ✨
 
-Aap hamari official boutique website se direct apna order Cash on Delivery par book kar sakte hain:
+Aap hamari official boutique website se direct collection dekh saktay hain aur apna order Cash on Delivery par book kar sakte hain:
 👉 ${link}
 
-Aapka phone number pehle se link hai. Sirf apna address verify karke order confirm karein! 🚚📦`;
+🚚 Free Express Delivery | 14-Day Hassle-Free Exchange | Cash on Delivery (COD) 🌸`;
 
     setSending(true);
     try {
-      await api.sendAgentMessage(activeConv.id, text);
+      await api.sendAgentMessage(activeConv.id, text, null);
       await loadMessages(activeConv.id);
       await loadConversations();
     } catch (err) {

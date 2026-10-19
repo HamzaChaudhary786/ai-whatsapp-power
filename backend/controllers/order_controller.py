@@ -439,7 +439,8 @@ class OrderController:
                     (f" (Size: {it.size})" if getattr(it, "size", None) and it.size != "Standard" else "")
                     for it in data.items
                 ])
-                first_img = next((it.image_url for it in data.items if getattr(it, "image_url", None)), None)
+                first_prod_id = next((getattr(it, "product_id", None) for it in data.items if getattr(it, "product_id", None)), None)
+                first_prod_url = settings.get_product_url(first_prod_id) if first_prod_id else settings.STOREFRONT_URL
                 wa_confirm_msg = (
                     f"🎉 *Mubarak {full_name}! Your order has been placed successfully!* ✨\n\n"
                     f"📦 *Order ID / Number:* *#{order_number}*\n"
@@ -449,21 +450,13 @@ class OrderController:
                     f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
                     f"Our atelier team is already preparing your package for courier dispatch! "
                     f"You can track your order anytime with ID *#{order_number}*. 📦👗\n\n"
-                    f"🌐 *View Live Order & Website Catalog:*\n{settings.STOREFRONT_URL}"
+                    f"🌐 *View Ordered Dress on Website:*\n{first_prod_url}\n\n"
+                    f"🌐 *Explore Full Collection:*\n{settings.STOREFRONT_URL}"
                 )
                 async def _send_wa_order_notification():
                     clean_ph = normalize_pakistan_phone(phone)
                     try:
-                        sent_ok = False
-                        if first_img and str(first_img).startswith("http"):
-                            try:
-                                await whatsapp_client.send_image_message(clean_ph, first_img, caption=wa_confirm_msg[:1000])
-                                sent_ok = True
-                            except Exception as img_err:
-                                print(f"[WARNING] WhatsApp image dispatch failed ({img_err}), falling back to text...")
-                        
-                        if not sent_ok:
-                            await whatsapp_client.send_text_message(clean_ph, wa_confirm_msg)
+                        await whatsapp_client.send_text_message(clean_ph, wa_confirm_msg, preview_url=True)
                         print(f"[INFO] WhatsApp order notification dispatched successfully to {clean_ph} for #{order_number}")
                     except Exception as e:
                         print(f"[WARNING] Could not dispatch WhatsApp order notification to {clean_ph}: {e}")
@@ -1322,7 +1315,8 @@ class OrderController:
                     (f" (Size: {it.get('size')})" if it.get("size") and it.get("size") != "Standard" else "")
                     for it in items
                 ])
-                first_img = next((it.get("image_url") for it in items if it.get("image_url")), None)
+                first_prod_id = next((it.get("product_id") for it in items if it.get("product_id")), None)
+                first_prod_url = settings.get_product_url(first_prod_id) if first_prod_id else settings.STOREFRONT_URL
                 wa_confirm_msg = (
                     f"🎉 *Mubarak {full_name}! Your order has been placed successfully!* ✨\n\n"
                     f"📦 *Order ID / Number:* *#{order_number}*\n"
@@ -1332,21 +1326,11 @@ class OrderController:
                     f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
                     f"Our atelier team is already preparing your package for courier dispatch! "
                     f"You can track your order anytime with ID *#{order_number}*. 📦👗\n\n"
-                    f"🌐 *View Live Order & Website Catalog:*\n{settings.STOREFRONT_URL}"
+                    f"🌐 *View Ordered Dress on Website:*\n{first_prod_url}\n\n"
+                    f"🌐 *Explore Full Collection:*\n{settings.STOREFRONT_URL}"
                 )
 
-                sent_ok = False
-                res_wa = None
-                if first_img and str(first_img).startswith("http"):
-                    try:
-                        res_wa = await whatsapp_client.send_image_message(clean_ph, first_img, caption=wa_confirm_msg[:1000])
-                        sent_ok = True
-                    except Exception as img_err:
-                        print(f"[WARNING] Resend WhatsApp image failed ({img_err}), falling back to text...")
-                
-                if not sent_ok:
-                    res_wa = await whatsapp_client.send_text_message(clean_ph, wa_confirm_msg)
-                
+                res_wa = await whatsapp_client.send_text_message(clean_ph, wa_confirm_msg, preview_url=True)
                 wamid = (res_wa.get("messages", [{}])[0].get("id")) if res_wa and isinstance(res_wa, dict) else None
                 results["whatsapp"] = f"DISPATCHED to {clean_ph} (wamid: {wamid})"
             except Exception as e:

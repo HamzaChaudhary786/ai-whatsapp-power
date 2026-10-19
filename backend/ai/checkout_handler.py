@@ -226,7 +226,8 @@ class CheckoutHandler:
     def _render_order_review_card(self, session: Dict[str, Any]) -> str:
         """Renders the professional e-commerce Itemized Order Summary Card with confirmation call to action."""
         prod_name = session.get("product_name", "Fashion Outfit")
-        prod_img = session.get("product_image", "")
+        prod_id = session.get("product_id")
+        prod_url = settings.get_product_url(prod_id)
         size = session.get("selected_size", "Standard")
         color = session.get("selected_color", "Standard")
         qty = session.get("quantity", 1)
@@ -236,7 +237,7 @@ class CheckoutHandler:
         phone = session.get("customer_phone", "")
         addr = session.get("street_address", "Delivery Address")
         city = session.get("city", "City")
-        photo_line = f"\n\n📸 *Product Photo:* {prod_img}" if prod_img else ""
+        website_line = f"\n🌐 *View Product on Website:*\n{prod_url}\n" if prod_url else ""
 
         return (
             f"🛍️ *ORDER REVIEW & CONFIRMATION* 📋✨\n"
@@ -253,7 +254,8 @@ class CheckoutHandler:
             f"📱 *Phone:* {phone}\n"
             f"🏠 *Address:* {addr}, {city}\n"
             f"💵 *Payment Method:* Cash on Delivery (COD)\n"
-            f"━━━━━━━━━━━━━━━━━━━━{photo_line}\n\n"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"{website_line}\n"
             f"👉 Order book karne ke liye *'CONFIRM'* (ya *'HAAN'*) reply karein!\n"
             f"*(Size/Address change karne ke liye naya size ya address share karein, ya cancel karne ke liye 'CANCEL' reply karein)* 🌸📦"
         )
@@ -410,7 +412,7 @@ class CheckoutHandler:
                 {"$set": {"checkout_session": session, "last_message_at": datetime.now(timezone.utc)}}
             )
             review_text = self._render_order_review_card(session)
-            return StylistReply(review_text, image_url=session.get("product_image"))
+            return StylistReply(review_text, image_url=None)
 
         # =====================================================================
         # STATE B: AWAITING_ADDRESS
@@ -437,7 +439,7 @@ class CheckoutHandler:
                     {"$set": {"checkout_session": session, "last_message_at": datetime.now(timezone.utc)}}
                 )
                 review_text = self._render_order_review_card(session)
-                return StylistReply(review_text, image_url=session.get("product_image"))
+                return StylistReply(review_text, image_url=None)
             else:
                 return StylistReply(
                     f"Aapki address details complete nahi hain. 🌸\n\n"
@@ -493,7 +495,7 @@ class CheckoutHandler:
                 updated_review = self._render_order_review_card(session)
                 return StylistReply(
                     f"✅ *Delivery Address Updated!*\n\n{updated_review}",
-                    image_url=session.get("product_image")
+                    image_url=None
                 )
 
             if new_size and new_size != session.get("selected_size"):
@@ -513,7 +515,7 @@ class CheckoutHandler:
                     updated_review = self._render_order_review_card(session)
                     return StylistReply(
                         f"✅ *Size Updated to {new_size}!*\n\n{updated_review}",
-                        image_url=session.get("product_image")
+                        image_url=None
                     )
 
             if is_affirmative:
@@ -630,7 +632,7 @@ class CheckoutHandler:
                         f"👤 *Customer:* {session.get('customer_name')}\n"
                         f"📍 *Delivery Destination:* {session.get('street_address')}, {session.get('city')}\n"
                         f"━━━━━━━━━━━━━━━━━━━━\n\n"
-                        f"📸 *Product Photo:* {session.get('product_image')}\n\n"
+                        f"🌐 *View Product on Website:*\n{settings.get_product_url(session.get('product_id'))}\n\n"
                         f"Aapko WhatsApp aur Email par confirmation dispatch note send kar diya gaya hai. "
                         f"Kisi bhi waqt status check karne ke liye *'Track my order'* reply karein.\n\n"
                         f"🌐 *View Live Order Details & Storefront:*\n{settings.STOREFRONT_URL}\n\n"
@@ -641,7 +643,7 @@ class CheckoutHandler:
                         celebration_msg,
                         order_created=True,
                         order=created_order,
-                        image_url=session.get("product_image"),
+                        image_url=None,
                     )
 
                 except HTTPException as http_err:
@@ -856,14 +858,16 @@ class CheckoutHandler:
                     {"$set": {"checkout_session": session_data, "last_message_at": datetime.now(timezone.utc)}}
                 )
             color_str = f"\n🎨 *Available Color:* {all_colors[0]}" if len(all_colors) == 1 else (f"\n🎨 *Available Colors:* {', '.join(all_colors)}" if all_colors else "")
+            prod_book_url = settings.get_product_url(str(matched_product["_id"]))
             return StylistReply(
                 f"🛍️ *Order Booking: {matched_product['name']}* 👗✨\n\n"
                 f"• *Price:* PKR {base_price:,.2f} (Complimentary Free Express Delivery 🚚)\n"
                 f"• *Payment Method:* Cash on Delivery (COD)\n\n"
+                f"🌐 *View Product on Website:*\n{prod_book_url}\n\n"
                 f"Baraye meharbani pehle apna *Size* muntakhib karein:\n"
                 f"📏 *Available Sizes:* {', '.join(all_sizes)}{color_str}\n\n"
                 f"Aapko kaunsa size chahiye? (Reply: S, M, L, ya XL) 🌸",
-                image_url=prod_img
+                image_url=None
             )
 
         # 2. Ask for Color if not provided and product offers multiple colors
@@ -892,12 +896,14 @@ class CheckoutHandler:
                     {"_id": conv_oid},
                     {"$set": {"checkout_session": session_data, "last_message_at": datetime.now(timezone.utc)}}
                 )
+            prod_book_url = settings.get_product_url(str(matched_product["_id"]))
             return StylistReply(
                 f"🛍️ *Order Booking: {matched_product['name']}* 👗✨\n\n"
                 f"Aapka size *{session_data['selected_size']}* note ho gaya hai. Baraye meharbani apna pasandeeda *Color* choose karein:\n"
                 f"🎨 *Available Colors:* {', '.join(all_colors)}\n\n"
+                f"🌐 *View Product on Website:*\n{prod_book_url}\n\n"
                 f"Aapko kaunsa color chahiye? 🌸",
-                image_url=prod_img
+                image_url=None
             )
 
         final_size = extracted_size or (all_sizes[0] if all_sizes else "M")
@@ -987,7 +993,7 @@ class CheckoutHandler:
             )
 
         review_text = self._render_order_review_card(session_data)
-        return StylistReply(review_text, image_url=prod_img)
+        return StylistReply(review_text, image_url=None)
 
 
 checkout_handler = CheckoutHandler()

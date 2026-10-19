@@ -141,7 +141,7 @@ class VariantInquiryHandler:
         all_sizes = list(dict.fromkeys(v.get("size") for v in variants if v.get("size")))
         prices = [v.get("price", 0.0) for v in variants if "price" in v and v.get("price")]
         base_price = float(prices[0]) if prices else (float(target_product.get("price", 7990.0)) if target_product.get("price") else 7990.0)
-        prod_img = target_product.get("image_urls", [None])[0] if target_product.get("image_urls") else "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=600&q=80"
+        prod_store_url = settings.get_product_url(str(target_product["_id"]))
 
         # 3. SPECIFIC SIZE INQUIRY (e.g., "medium size ha is product ma", "large size available hai?")
         queried_size = None
@@ -176,7 +176,7 @@ class VariantInquiryHandler:
                         f"• *Color(s):* {', '.join(colors_in_size) if colors_in_size else 'Standard'}\n"
                         f"• *Price:* PKR {unit_p:,.2f} (Complimentary Free Express Delivery 🚚)\n"
                         f"• *Payment:* Cash on Delivery (COD)\n\n"
-                        f"📸 *Product Photo:* {prod_img}\n\n"
+                        f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                         f"Kya aapka order *{queried_size}* size mein reserve kar doon? "
                         f"Aap bas apna delivery city batayein ya *'Place Order'* reply karein! 🌸✨"
                     )
@@ -186,17 +186,18 @@ class VariantInquiryHandler:
                         f"⚠️ Maazrat! Hamari *{target_product['name']}* mein *{size_label}* size is waqt out of stock ho chuka hai. 🌸\n\n"
                         f"Lekin hamare paas yeh sizes abhi available hain:\n"
                         f"📏 *Available Sizes:* {', '.join(other_in_stock) if other_in_stock else 'Restocking soon'}\n\n"
+                        f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                         f"Kya aap in mein se koi size try karna chahein gay? 👗"
                     )
                 return StylistReply(
                     reply_msg,
-                    image_url=prod_img,
+                    image_url=None,
                     product_action={
                         "product_id": str(target_product["_id"]),
+                        "product_url": prod_store_url,
                         "name": target_product["name"],
                         "size": queried_size,
                         "price": unit_p,
-                        "image_url": prod_img,
                         "colors": all_colors,
                         "sizes": all_sizes,
                         "variants": variants,
@@ -228,29 +229,31 @@ class VariantInquiryHandler:
                             f"• *Available Sizes:* {', '.join(col_sizes) if col_sizes else 'Standard'}\n"
                             f"• *Stock:* {col_stock} piece(s) mojood hain\n"
                             f"• *Price:* PKR {base_price:,.2f} (Complimentary Free Delivery 🚚)\n\n"
-                            f"📸 *Product Photo:* {prod_img}\n\n"
+                            f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                             f"Kya main yeh color aapke liye reserve kar doon? 👗✨"
                         )
                     else:
                         reply_msg = (
                             f"⚠️ Maazrat! *{target_product['name']}* mein *{actual_col_name}* color is waqt out of stock hai. 🌸\n\n"
-                            f"Hamare paas yeh colors available hain: *{', '.join(all_colors)}*. ✨"
+                            f"Hamare paas yeh colors available hain: *{', '.join(all_colors)}*. ✨\n\n"
+                            f"🌐 *View Product on Website:*\n{prod_store_url}"
                         )
                 else:
                     reply_msg = (
                         f"Maazrat! Hamari *{target_product['name']}* mein *{queried_color.title()}* color offer nahi hota. ✨\n\n"
                         f"Yeh outfit in colors mein available hai:\n"
                         f"🎨 *Available Colors:* {', '.join(all_colors)}\n\n"
+                        f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                         f"Agar aapko *{queried_color.title()}* color mein hi outfit dekhna hai toh batayein, main aapko hamari doosri stunning collection dikha sakti hoon! 🌸👗"
                     )
                 return StylistReply(
                     reply_msg,
-                    image_url=prod_img,
+                    image_url=None,
                     product_action={
                         "product_id": str(target_product["_id"]),
+                        "product_url": prod_store_url,
                         "name": target_product["name"],
                         "price": base_price,
-                        "image_url": prod_img,
                         "colors": all_colors,
                         "sizes": all_sizes,
                         "variants": variants,
@@ -265,7 +268,7 @@ class VariantInquiryHandler:
                     f"• *Available Sizes:* {', '.join(all_sizes) if all_sizes else 'S, M, L, XL'}\n"
                     f"• *Price:* PKR {base_price:,.2f} (Free Express Delivery 🚚)\n"
                     f"• *Payment:* Cash on Delivery (COD)\n\n"
-                    f"📸 *Product Photo:* {prod_img}\n\n"
+                    f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                     f"Agar aap koi aur color (e.g. Black, Sage Green, Ivory, Emerald) dekhna chahte hain, toh batayein! Main aapko hamari collection mein se similar styles dikha sakti hoon. 👗🌸"
                 )
             else:
@@ -278,18 +281,17 @@ class VariantInquiryHandler:
                     f"🎨 *Available Colors:*\n" + "\n".join(col_lines) + f"\n\n"
                     f"• *Price:* PKR {base_price:,.2f} (Free Express Delivery 🚚)\n"
                     f"• *Payment:* Cash on Delivery (COD)\n\n"
-                    f"📸 *Product Photo:* {prod_img}\n\n"
-                    f"🛍️ *View Full Color Gallery Online:*\n{settings.STOREFRONT_URL}\n\n"
+                    f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
                     f"Aapko kaunsa color pasand hai? Main aapke liye foran reserve kar sakti hoon! 👗✨"
                 )
             return StylistReply(
                 reply_msg,
-                image_url=prod_img,
+                image_url=None,
                 product_action={
                     "product_id": str(target_product["_id"]),
+                    "product_url": prod_store_url,
                     "name": target_product["name"],
                     "price": base_price,
-                    "image_url": prod_img,
                     "colors": all_colors,
                     "sizes": all_sizes,
                     "variants": variants,
@@ -306,18 +308,17 @@ class VariantInquiryHandler:
             f"📦 *Total Stock:* {total_units} pieces mojood hain\n"
             f"💵 *Price:* PKR {base_price:,.2f} (Complimentary Free Express Delivery 🚚)\n"
             f"💵 *Payment Method:* Cash on Delivery (COD)\n\n"
-            f"📸 *Product Photo:* {prod_img}\n\n"
-            f"🛍️ *Browse Full Catalog & Sizes Online:*\n{settings.STOREFRONT_URL}\n\n"
+            f"🌐 *View Product on Website:*\n{prod_store_url}\n\n"
             f"Aapko kaunsa size aur color chahiye? Main aapka order prepare kar sakti hoon! 🌸"
         )
         return StylistReply(
             reply_msg,
-            image_url=prod_img,
+            image_url=None,
             product_action={
                 "product_id": str(target_product["_id"]),
+                "product_url": prod_store_url,
                 "name": target_product["name"],
                 "price": base_price,
-                "image_url": prod_img,
                 "colors": all_colors,
                 "sizes": all_sizes,
                 "variants": variants,

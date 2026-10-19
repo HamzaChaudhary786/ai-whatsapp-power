@@ -40,6 +40,14 @@ class Settings(BaseSettings):
     SMTP_PASS: Optional[str] = None
     SMTP_FROM: str = "Fashion AI Atelier <orders@fashionai.com>"
 
+    def get_product_url(self, product_id: Optional[str] = None) -> str:
+        base = (self.STOREFRONT_URL or "https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app").rstrip("/")
+        if base.endswith("/id"):
+            base = base[:-3].rstrip("/")
+        if product_id:
+            return f"{base}/{str(product_id).strip()}"
+        return base
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 

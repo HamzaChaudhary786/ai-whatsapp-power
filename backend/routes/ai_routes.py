@@ -151,6 +151,16 @@ async def chat_with_stylist(
         {"$set": {"last_message_at": datetime.now(timezone.utc)}}
     )
 
+    prod_action = getattr(reply, "product_action", None)
+    from config.settings import settings
+    if isinstance(prod_action, dict) and prod_action.get("product_id") and not prod_action.get("product_url"):
+        prod_action["product_url"] = settings.get_product_url(prod_action["product_id"])
+
+    rel_prods = getattr(reply, "relevant_products", []) or []
+    for rp in rel_prods:
+        if isinstance(rp, dict) and rp.get("id") and not rp.get("product_url"):
+            rp["product_url"] = settings.get_product_url(rp["id"])
+
     return _make_json_safe({
         "user_message": message,
         "phone": clean_phone,
@@ -161,9 +171,9 @@ async def chat_with_stylist(
         "staff_name": None,
         "order_created": getattr(reply, "order_created", False),
         "order": getattr(reply, "order", None),
-        "product_action": getattr(reply, "product_action", None),
-        "image_url": getattr(reply, "image_url", None),
-        "relevant_products": getattr(reply, "relevant_products", []),
+        "product_action": prod_action,
+        "image_url": None,
+        "relevant_products": rel_prods,
         "conversion_nudge": getattr(reply, "conversion_nudge", None),
         "active_model": fashion_assistant._active_model_name or "gemini-3.5-flash-lite",
     })

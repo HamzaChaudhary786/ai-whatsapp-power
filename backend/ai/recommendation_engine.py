@@ -7,6 +7,7 @@ from bson import ObjectId
 from ai.demand_tracker import demand_tracker
 from ai.ml_recommender import ml_recommender
 from ai.online_learning import online_learning_engine
+from config.settings import settings
 
 
 # Fashion taxonomy for entity extraction
@@ -409,6 +410,7 @@ class FashionRecommendationEngine:
 
             item_data = {
                 "id": pid,
+                "product_url": settings.get_product_url(pid),
                 "name": doc["name"],
                 "slug": doc.get("slug"),
                 "category": doc.get("category"),
@@ -570,6 +572,7 @@ class FashionRecommendationEngine:
 
             item_data = {
                 "id": cid,
+                "product_url": settings.get_product_url(cid),
                 "name": c["name"],
                 "slug": c.get("slug"),
                 "category": c.get("category"),

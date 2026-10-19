@@ -17,18 +17,16 @@ from utils.email_service import email_service
 from utils.phone_utils import normalize_pakistan_phone
 from ai.checkout_handler import checkout_handler
 from ai.variant_handler import variant_handler
+from utils.url_helper import clean_chat_reply_text, get_product_storefront_url
 
 
-def _clean_stylist_text(text: str) -> str:
-    """Cleans responses by removing double asterisks, excessive markdown clutter, and messy formatting."""
+def _clean_stylist_text(text: str, product_id: Optional[str] = None) -> str:
+    """Cleans responses by removing double asterisks, excessive markdown clutter, and raw image URLs."""
     if not text:
         return ""
-    # Strip markdown double asterisks completely
     cleaned = text.replace("**", "")
-    # Remove any consecutive asterisks (*** etc.)
     cleaned = re.sub(r"\*{2,}", "", cleaned)
-    # Normalize excessive newlines
-    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    cleaned = clean_chat_reply_text(cleaned, product_id=product_id)
     return cleaned.strip()
 
 
@@ -44,13 +42,19 @@ class StylistReply(str):
         relevant_products: Optional[List[Dict[str, Any]]] = None,
         conversion_nudge: Optional[str] = None,
     ):
-        cleaned_text = _clean_stylist_text(text)
+        prod_id = None
+        if isinstance(product_action, dict):
+            prod_id = product_action.get("product_id") or product_action.get("id")
+            if prod_id and "product_url" not in product_action:
+                product_action["product_url"] = settings.get_product_url(prod_id)
+
+        cleaned_text = _clean_stylist_text(text, product_id=prod_id)
         obj = str.__new__(cls, cleaned_text)
         obj.order_created = order_created
         obj.order = order
         obj.product_action = product_action
-        obj.image_url = image_url
-        obj.relevant_products = relevant_products or []
+        obj.image_url = None  # Raw image URLs completely eliminated in favor of website product URLs
+        obj.relevant_products = relevant_products
         obj.conversion_nudge = conversion_nudge
         return obj
 
@@ -228,6 +232,7 @@ class FashionAssistant:
 
         return {
             "id": pid,
+            "product_url": settings.get_product_url(pid),
             "name": p.get("name"),
             "category": p.get("category"),
             "price": price_display,
@@ -407,10 +412,12 @@ class FashionAssistant:
 
         self._init_gemini()
 
+        base_store = settings.STOREFRONT_URL.rstrip('/')
+
         # Format Catalog Context
         catalog_summary = "\n".join(
             [
-                f"- {item['name']} ({item['category']}): {item['price']} | Colors: {item['colors']} | Sizes: {item['sizes']} | Details: {item['description']}"
+                f"- {item['name']} ({item['category']}): {item['price']} | Website Link: {base_store}/{item['id']} | Colors: {item['colors']} | Sizes: {item['sizes']} | Details: {item['description']}"
                 for item in catalog_ctx
             ]
         ) or "No catalog items currently loaded."
@@ -419,7 +426,7 @@ class FashionAssistant:
         recs_summary = ""
         if recommendations_ctx:
             r_lines = [
-                f"- {r['name']} ({r.get('category', 'Fashion')}): {r['price']} | Colors: {r.get('colors')} | Sizes: {r.get('sizes')} | Score: {r.get('score')} | Details: {r.get('description', '')[:120]}"
+                f"- {r['name']} ({r.get('category', 'Fashion')}): {r['price']} | Website Link: {base_store}/{r['id']} | Colors: {r.get('colors')} | Sizes: {r.get('sizes')} | Score: {r.get('score')} | Details: {r.get('description', '')[:120]}"
                 for r in recommendations_ctx
             ]
             recs_summary = "\n[AI ML PERSONALIZED RECOMMENDATIONS FOR THIS INQUIRY]\n" + "\n".join(r_lines) + "\n"
@@ -428,7 +435,7 @@ class FashionAssistant:
         cross_sell_summary = ""
         if cross_sells_ctx:
             c_lines = [
-                f"- Matching Piece: {c['name']} ({c.get('category')}) - {c['price']} | Colors: {c.get('colors')} | Sizes: {c.get('sizes')}"
+                f"- Matching Piece: {c['name']} ({c.get('category')}) - {c['price']} | Website Link: {base_store}/{c['id']} | Colors: {c.get('colors')} | Sizes: {c.get('sizes')}"
                 for c in cross_sells_ctx
             ]
             cross_sell_summary = "\n[HIGH-CONVERSION COMPLEMENTARY CROSS-SELL PIECES TO SUGGEST TOGETHER]\n" + "\n".join(c_lines) + "\n"
@@ -462,11 +469,11 @@ class FashionAssistant:
 
         system_instruction = (
             "You are 'Aria', an elite, warm, and highly professional Fashion Stylist & Personal Shopper "
-            "for a premier fashion boutique on WhatsApp.\n\n"
+            "for a premier luxury boutique on WhatsApp.\n\n"
             "CRITICAL STYLE & FORMATTING RULES (STRICT):\n"
             "1. NO DOUBLE ASTERISKS (**): NEVER output markdown double asterisks '**'. Do not write '**Product**' or '**Price**'. "
-            "Double asterisks look messy, raw, and spammy. Write clean plain text or use single asterisks sparingly.\n\n"
-            "2. CLEAN, SHORT & PROFESSIONAL (NO ESSAYS): Customers want quick, direct answers, NOT long complex paragraphs. "
+            "Write clean plain text or use single asterisks sparingly for key titles.\n\n"
+            "2. CLEAN, SHORT & PROFESSIONAL: Customers want quick, direct answers, NOT long essays. "
             "Keep responses CRISP, SHORT, AND HIGHLY READABLE (3 to 5 short lines max).\n\n"
             "3. HIGHLIGHT THE MAIN THING FIRST:\n"
             "- When recommending or discussing an outfit, clearly state on their own clean lines:\n"
@@ -474,6 +481,9 @@ class FashionAssistant:
             "  Price: PKR [Amount] (Free Express Delivery)\n"
             "  Colors: [Available Colors]\n"
             "  Sizes: [Available Sizes]\n"
+            f"  View on Website: {base_store}/[Product ID]\n"
+            "- CRITICAL RULE: NEVER output raw image URLs (e.g. unsplash, static uploads, or direct photo links). "
+            f"Instead, ALWAYS provide the official website product link ({base_store}/<product_id>) so the customer can view high-resolution photos and details directly on the website.\n"
             "- Add one short styling tip or pairing suggestion.\n"
             "- Finish with a quick polite call-to-action (e.g. 'Would you like to reserve your size? Reply with size & city!').\n\n"
             "4. ROTATE RECOMMENDATIONS (NEVER REPEAT SAME DRESS):\n"
@@ -486,9 +496,11 @@ class FashionAssistant:
             "Use [STORE POLICIES & FAQS] for delivery timelines (Same-day Lahore, 24-48h nationwide, Free delivery), Cash on Delivery (COD), open parcel policy, and 7-day exchange.\n\n"
             "7. BILINGUAL ELEGANCE:\n"
             "Converse naturally in warm, elegant English or Roman Urdu matching the user's natural language. Keep text polished and clutter-free.\n\n"
-            f"8. LIVE STOREFRONT WEBSITE LINK:\n"
-            f"Our official live customer website is: {settings.STOREFRONT_URL}\n"
-            f"When customer asks to browse full catalog, explore dresses, or wants website links/order tracking online, warmly share our live website link: {settings.STOREFRONT_URL}\n"
+            "8. LIVE STOREFRONT WEBSITE & PRODUCT LINKS:\n"
+            f"Our official store website is: {base_store}\n"
+            f"Every dress in the catalog has a direct website link: {base_store}/<product_id>\n"
+            f"Whenever customer asks about a dress, or you recommend a dress, ALWAYS include its direct link: {base_store}/<product_id> so customer can view pictures & inspect details directly on our website.\n"
+            f"When customer asks generally to browse dresses, catalog, or track orders online, warmly share the general website link: {base_store}\n"
         )
 
         user_prompt = f"""[CONTEXT DATA]
@@ -1553,7 +1565,7 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                 f"Maine hamara exclusive Curated Style Lookbook aur 10% VIP Discount Voucher (Code: VIPSTYLE10) aapke email {extracted_email} par send kar diya hai! 📧\n\n"
                 f"Aap apna inbox check kar sakti hain. In the meantime, kya aap kisi specific event ya style ke liye outfits dekhna chahein gi? 👗🌿"
             )
-            return StylistReply(email_ack_text, image_url=top_img)
+            return StylistReply(email_ack_text, image_url=None)
 
         # 4. Check direct Order ID match if present
         order_match = re.search(r"(ORD-\d{8}-\d{4}|ORD\d+|#ORD\w+)", user_message.upper())
@@ -1777,7 +1789,9 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         except Exception:
                             pass
 
-                photo_line = f"\n\n📸 *Product Photo:* {top_img}" if top_img and top_img not in gemini_reply else ""
+                top_id = top_item.get("id") if top_item else None
+                top_url = settings.get_product_url(top_id) if top_id else settings.STOREFRONT_URL
+                sanitized_reply = clean_chat_reply_text(gemini_reply, product_id=top_id)
                 postscript = ""
                 if is_styling_query and not customer_ctx.get("customer_email"):
                     postscript = (
@@ -1785,13 +1799,13 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                         "apne email par chahiye, toh bas apna Email address reply kar dein! ✨"
                     )
                 return StylistReply(
-                    gemini_reply + photo_line + postscript,
-                    image_url=top_img,
+                    sanitized_reply + postscript,
+                    image_url=None,
                     product_action={
                         "product_id": top_item.get("id"),
+                        "product_url": top_url,
                         "name": top_item.get("name"),
                         "price": top_item.get("min_price") or top_item.get("price"),
-                        "image_url": top_img,
                         "colors": top_item.get("color_list") or (top_item.get("colors").split(", ") if isinstance(top_item.get("colors"), str) else top_item.get("colors")),
                         "sizes": top_item.get("size_list") or (top_item.get("sizes").split(", ") if isinstance(top_item.get("sizes"), str) else top_item.get("sizes")),
                         "variants": top_item.get("variants", []),
@@ -1853,14 +1867,17 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
         # 0. ML Recommender Fallback if products are available
         if recommended_products and (is_styling_query or intent == "browse_catalog"):
             top = recommended_products[0]
-            top_img = top.get("image_url")
+            top_id = top.get("id") or top.get("_id")
+            top_url = settings.get_product_url(top_id)
             other_lines = []
             for p in (relevant_cross_sells or recommended_products[1:]):
-                other_lines.append(f"• *{p['name']}* ({p.get('category', 'Fashion')}) - {p['price']} (Sizes: {p.get('sizes')})")
+                p_id = p.get("id") or p.get("_id")
+                p_url = settings.get_product_url(p_id)
+                other_lines.append(f"• *{p['name']}* ({p.get('category', 'Fashion')}) - {p['price']}\n  🔗 {p_url}")
             other_text = "\n\n👗 *Frequently Paired & Relevant Styles:*\n" + "\n".join(other_lines) if other_lines else ""
 
             nudge_str = f"\n\n{conversion_nudge}" if conversion_nudge else "\n\nWould you like to reserve your size with Free Express Delivery? Reply with your size and city! 👗"
-            photo_line = f"\n📸 Product Photo: {top_img}" if top_img else ""
+            product_url_line = f"\n🛍️ *View & Order on Website:*\n{top_url}\n"
             store_line = f"\n🛍️ *Browse Full Collection Online:*\n{settings.STOREFRONT_URL}\n"
             fallback_card = (
                 f"✨ Recommended for You: {top['name']}\n\n"
@@ -1868,18 +1885,19 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                 f"• Sizes: {top.get('sizes')}\n"
                 f"• Colors: {top.get('colors')}\n"
                 f"• Fabric & Style: {top.get('description', '')[:100]}...\n"
-                f"{photo_line}"
+                f"{product_url_line}"
+                f"{other_text}"
                 f"{store_line}"
                 f"{nudge_str}"
             )
             return StylistReply(
                 fallback_card,
-                image_url=top_img,
+                image_url=None,
                 product_action={
-                    "product_id": top.get("id"),
+                    "product_id": top_id,
+                    "product_url": top_url,
                     "name": top.get("name"),
                     "price": top.get("min_price") or top.get("price"),
-                    "image_url": top_img,
                     "colors": top.get("color_list") or (top.get("colors").split(", ") if isinstance(top.get("colors"), str) else top.get("colors")),
                     "sizes": top.get("size_list") or (top.get("sizes").split(", ") if isinstance(top.get("sizes"), str) else top.get("sizes")),
                     "variants": top.get("variants", []),
@@ -1935,23 +1953,23 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
 
                     colors_str = "\n".join([f"• {c}" for c in colors]) if colors else "• Standard Colors"
                     sizes_str = ", ".join(sizes) if sizes else "S, M, L"
+                    target_url = settings.get_product_url(str(target_p["_id"]))
 
                     reply_text = (
                         f"✨ Hamari *{target_p['name']}* ({price_str}) mein yeh colors aur sizes available hain:\n\n"
                         f"🎨 *Available Colors:*\n{colors_str}\n\n"
                         f"📏 *Available Sizes:* {sizes_str}\n\n"
-                        f"📸 *Product Photo:* {p_img}\n\n"
-                        f"🛍️ *View on Website:* {settings.STOREFRONT_URL}\n\n"
+                        f"🌐 *View Product on Website:*\n{target_url}\n\n"
                         f"Aapko kaunsa color aur size chahiye? Main aapke liye foran reserve kar sakti hoon! 👗🌿"
                     )
                     return StylistReply(
                         reply_text,
-                        image_url=p_img,
+                        image_url=None,
                         product_action={
                             "product_id": str(target_p["_id"]),
+                            "product_url": target_url,
                             "name": target_p["name"],
                             "price": min(prices) if prices else 14000.0,
-                            "image_url": p_img,
                             "colors": colors,
                             "sizes": sizes,
                             "variants": variants,
@@ -1984,24 +2002,22 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                     sizes = list(set(v.get("size", "") for v in variants if v.get("size")))
                     colors = list(set(v.get("color", "") for v in variants if v.get("color")))
                     price_str = f"PKR {min(prices):,.2f}" if prices else "PKR 14,000.00"
-                    prod_imgs = prod_doc.get("image_urls", [])
-                    p_img = prod_imgs[0] if prod_imgs else "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=600&q=80"
+                    prod_url = settings.get_product_url(str(prod_doc["_id"]))
                     return StylistReply(
                         f"✨ *{prod_doc['name']}* ({prod_doc.get('category', 'Fashion')})\n\n"
                         f"• *Price*: {price_str}\n"
                         f"• *Available Sizes*: {', '.join(sizes) if sizes else 'S, M, L, XL'}\n"
                         f"• *Colors*: {', '.join(colors) if colors else 'Classic White, Sky Blue'}\n"
                         f"• *Fabric & Details*: {prod_doc.get('description', 'Crafted from premium fabric designed for all-day comfort.')}\n\n"
-                        f"📸 *Product Photo Preview:* {p_img}\n\n"
-                        f"🛍️ *View on Website:* {settings.STOREFRONT_URL}\n\n"
+                        f"🌐 *View Product on Website:*\n{prod_url}\n\n"
                         f"💡 *Styling Tip*: Pairs effortlessly with relaxed chinos, tailored linen pants, or denim for an elevated casual look.\n\n"
                         f"Would you like to reserve your size or place an order today?",
-                        image_url=p_img,
+                        image_url=None,
                         product_action={
                             "product_id": str(prod_doc["_id"]),
+                            "product_url": prod_url,
                             "name": prod_doc["name"],
                             "price": prices[0] if prices else 14000.0,
-                            "image_url": p_img,
                             "colors": colors,
                             "sizes": sizes,
                             "variants": variants,
@@ -2047,10 +2063,11 @@ IMPORTANT: Prioritize the customer's exact message above all else. Provide a com
                 for idx, p in enumerate(products, 1):
                     variant = await db["product_variants"].find_one({"product_id": str(p["_id"])})
                     price_str = f"PKR {variant['price']:,.2f}" if variant and "price" in variant else "Best Price"
-                    catalog_lines.append(f"{idx}. *{p['name']}* ({p['category']}) - {price_str}")
+                    p_url = settings.get_product_url(str(p["_id"]))
+                    catalog_lines.append(f"{idx}. *{p['name']}* ({p['category']}) - {price_str}\n   🔗 {p_url}")
                 catalog_lines.append(f"\n🛍️ *Browse Entire Luxury Collection Online:*\n{settings.STOREFRONT_URL}")
                 catalog_lines.append("\nReply with the product name to see colors, sizes, or place an order!")
-                return "\n".join(catalog_lines)
+                return StylistReply("\n".join(catalog_lines), image_url=None)
 
         if intent == "size_recommendation":
             return (

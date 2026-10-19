@@ -236,45 +236,21 @@ class WhatsAppController:
 
             # 8. Send Outbound Reply via WhatsApp Cloud API
             ext_reply_id = None
-            prod_img_url = getattr(reply_text, "image_url", None)
-            reply_body = str(reply_text).replace("**", "")
+            action_prod = getattr(reply_text, "product_action", None)
+            prod_id = action_prod.get("product_id") if isinstance(action_prod, dict) else None
+            if not prod_id and conv_doc:
+                prod_id = conv_doc.get("active_product_id")
+
+            from utils.url_helper import clean_chat_reply_text
+            reply_body = clean_chat_reply_text(str(reply_text).replace("**", ""), product_id=prod_id)
+
             try:
-                if prod_img_url:
-                    try:
-                        # Meta WhatsApp Cloud API supports image with caption up to 1024 chars
-                        if len(reply_body) <= 1000:
-                            img_res = await whatsapp_client.send_image_message(
-                                sender, prod_img_url, caption=reply_body
-                            )
-                            resp_msgs = img_res.get("messages", [])
-                            if resp_msgs:
-                                ext_reply_id = resp_msgs[0].get("id")
-                        else:
-                            # If text exceeds caption limit, send visual photo first then full message
-                            await whatsapp_client.send_image_message(
-                                sender, prod_img_url, caption="📸 *Product Visual Confirmation* ✨"
-                            )
-                            wa_res = await whatsapp_client.send_text_message(
-                                sender, reply_body, preview_url=True
-                            )
-                            resp_msgs = wa_res.get("messages", [])
-                            if resp_msgs:
-                                ext_reply_id = resp_msgs[0].get("id")
-                    except Exception as img_err:
-                        print(f"[WARNING] Failed to send product image to WhatsApp: {img_err}")
-                        wa_res = await whatsapp_client.send_text_message(
-                            sender, reply_body, preview_url=True
-                        )
-                        resp_msgs = wa_res.get("messages", [])
-                        if resp_msgs:
-                            ext_reply_id = resp_msgs[0].get("id")
-                else:
-                    wa_res = await whatsapp_client.send_text_message(
-                        sender, reply_body, preview_url=True
-                    )
-                    resp_msgs = wa_res.get("messages", [])
-                    if resp_msgs:
-                        ext_reply_id = resp_msgs[0].get("id")
+                wa_res = await whatsapp_client.send_text_message(
+                    sender, reply_body, preview_url=True
+                )
+                resp_msgs = wa_res.get("messages", [])
+                if resp_msgs:
+                    ext_reply_id = resp_msgs[0].get("id")
             except Exception as send_err:
                 print(f"[ERROR] Failed to send outbound WhatsApp message: {send_err}")
 
@@ -283,7 +259,7 @@ class WhatsAppController:
                 conversation_id=conv_id,
                 external_message_id=ext_reply_id,
                 direction=MessageDirection.OUTBOUND,
-                text=reply_text,
+                text=reply_body,
                 delivery_status=DeliveryStatus.SENT if ext_reply_id else DeliveryStatus.FAILED,
                 created_at=datetime.now(timezone.utc),
             ).model_dump(by_alias=True, exclude={"id"})

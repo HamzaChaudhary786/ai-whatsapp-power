@@ -56,6 +56,49 @@ import PrintableInvoiceModal from '../components/PrintableInvoiceModal';
 import WishlistDrawer from '../components/WishlistDrawer';
 import PolicyModal from '../components/PolicyModal';
 
+export const STOREFRONT_BASE_URL = 'https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app';
+
+export const extractProductIdFromUrl = () => {
+  if (typeof window === 'undefined') return null;
+
+  // 1. Check query parameters (?product=xyz or ?id=xyz)
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('product') || urlParams.get('id');
+    if (queryParam && queryParam.trim()) return queryParam.trim();
+  } catch {}
+
+  // 2. Check hash routing (#/product/xyz or #/xyz or #xyz)
+  if (window.location.hash) {
+    const cleanHash = window.location.hash.replace(/^#\/?/, '');
+    const hashParts = cleanHash.split('/').filter(Boolean);
+    if (hashParts.length > 0) {
+      const candidate = hashParts[hashParts.length - 1];
+      if (candidate && !['login', 'admin', 'console', 'storefront', 'cart'].includes(candidate.toLowerCase())) {
+        return candidate.trim();
+      }
+    }
+  }
+
+  // 3. Check pathname (/<productId> or /product/<productId>)
+  const cleanPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  if (cleanPath) {
+    const parts = cleanPath.split('/').filter(Boolean);
+    if (parts.length > 0) {
+      const candidate = parts[parts.length - 1];
+      if (
+        candidate &&
+        !['login', 'admin', 'console', 'storefront', 'cart', 'index.html', 'favicon.ico'].includes(candidate.toLowerCase()) &&
+        !candidate.includes('.')
+      ) {
+        return candidate.trim();
+      }
+    }
+  }
+
+  return null;
+};
+
 export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }) {
   const [products, setProducts] = useState([]);
   const [dbCategories, setDbCategories] = useState([]);
@@ -356,7 +399,11 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
 
   const cleanChatMessageText = (text) => {
     if (!text) return '';
-    return String(text).replace(/\*\*/g, '');
+    let cleaned = String(text).replace(/\*\*/g, '');
+    // Strip out any raw photo lines or direct image URLs from chat text
+    cleaned = cleaned.replace(/📸\s*\*?Product Photo:\*?\s*https?:\/\/[^\s]+/gi, '');
+    cleaned = cleaned.replace(/https?:\/\/[^\s]+(?:\.(?:png|jpe?g|webp|gif|svg)|unsplash\.com[^\s]*)/gi, '');
+    return cleaned.trim();
   };
 
   // Live Sync Chat with Staff Live Inbox (Auto-syncs ONLY for valid customer phone)
@@ -785,6 +832,37 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
     }
   }, []);
 
+  // Auto deep-link: if customer accessed URL with product ID (e.g. /prod_xxx or ?product=xxx), auto-open product modal
+  const hasAutoOpenedRef = useRef(false);
+  useEffect(() => {
+    const targetId = extractProductIdFromUrl();
+    if (!targetId || hasAutoOpenedRef.current) return;
+
+    if (products && products.length > 0) {
+      const match = products.find(
+        (p) => String(p.id) === targetId || String(p._id) === targetId || p.slug === targetId
+      );
+      if (match) {
+        hasAutoOpenedRef.current = true;
+        handleOpenProductDetails(match);
+        return;
+      }
+    }
+
+    if (!loading) {
+      api.getProduct(targetId)
+        .then((directProd) => {
+          if (directProd && (directProd.id || directProd._id)) {
+            hasAutoOpenedRef.current = true;
+            handleOpenProductDetails(directProd);
+          }
+        })
+        .catch((err) => {
+          console.warn('Could not auto-load product by URL identifier:', targetId, err);
+        });
+    }
+  }, [products, loading]);
+
   // Continuous Online Recommender: Live Semantic Search on Query Change
   useEffect(() => {
     if (!searchQuery || searchQuery.trim().length < 2) {
@@ -829,8 +907,17 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
 
   // Open Product Quick View & fetch complementary styles
   const handleOpenProductDetails = async (product) => {
+    if (!product) return;
     setSelectedProductModal(product);
     trackProductView(product);
+
+    // Sync direct product URL in address bar without full page reload
+    if (typeof window !== 'undefined' && product.id) {
+      const targetPath = `/${product.id}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.replaceState(null, '', targetPath);
+      }
+    }
 
     const colors = product.variants ? Array.from(new Set(product.variants.map((v) => v.color).filter(Boolean))) : [];
     const sizes = product.variants ? Array.from(new Set(product.variants.map((v) => v.size).filter(Boolean))) : [];
@@ -866,10 +953,18 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
     }
   };
 
+  const handleCloseProductDetails = () => {
+    setSelectedProductModal(null);
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.replaceState(null, '', '/');
+    }
+  };
+
   const getWhatsAppShareUrl = (product) => {
     if (!product) return '#';
     const priceText = product.sale_price ? `PKR ${product.sale_price}` : `PKR ${product.min_price || product.price || 14000}`;
-    const text = `Hey! Check out this gorgeous outfit from Luxe Atelier:\n✨ *${product.name}*\n🏷️ Price: ${priceText}\n👗 Category: ${product.category}\n🌐 Discover online: ${window.location.origin}`;
+    const productUrl = `${STOREFRONT_BASE_URL}/${product.id}`;
+    const text = `Hey! Check out this gorgeous outfit from Luxe Atelier:\n✨ *${product.name}*\n🏷️ Price: ${priceText}\n👗 Category: ${product.category}\n🌐 Discover online: ${productUrl}`;
     return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
   };
 
@@ -2244,8 +2339,12 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                       description: 'Handcrafted atelier design curated for your stylish wardrobe.',
                     };
 
+                    const prodStorefrontUrl = matchedDb?.id && matchedDb.id !== 'preview'
+                      ? `${STOREFRONT_BASE_URL}/${matchedDb.id}`
+                      : STOREFRONT_BASE_URL;
+
                     const waEncodedMsg = encodeURIComponent(
-                      `Hi Aria, I would like to confirm my order for: ${visualName}${visualColor ? ` (Color: ${visualColor})` : ''}${visualSize ? ` (Size: ${visualSize})` : ''} - Photo: ${visualImg}`
+                      `Hi Aria, I would like to confirm my order for: ${visualName}${visualColor ? ` (Color: ${visualColor})` : ''}${visualSize ? ` (Size: ${visualSize})` : ''}\n🌐 View on Website: ${prodStorefrontUrl}`
                     );
 
                     return (
@@ -4634,9 +4733,9 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
 
       {/* Product Quick View & Complete The Look Modal */}
       {selectedProductModal && (
-        <div className="product-modal-overlay" onClick={() => setSelectedProductModal(null)}>
+        <div className="product-modal-overlay" onClick={handleCloseProductDetails}>
           <div className="product-modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <button className="product-modal-close" onClick={() => setSelectedProductModal(null)}>
+            <button className="product-modal-close" onClick={handleCloseProductDetails}>
               <X size={18} />
             </button>
 
@@ -4871,7 +4970,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                         onClick={() => {
                           if (isOutOfStock) return;
                           addToCart(selectedProductModal, matchedVariant);
-                          setSelectedProductModal(null);
+                          handleCloseProductDetails();
                         }}
                       >
                         {isOutOfStock ? (
@@ -4918,7 +5017,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                         style={{ flex: '1 1 140px', padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                         onClick={() => {
                           const name = selectedProductModal.name;
-                          setSelectedProductModal(null);
+                          handleCloseProductDetails();
                           handleSendChatMessage(`Tell me more about ${name}`);
                           const el = document.getElementById('stylist-chat-box');
                           if (el) el.scrollIntoView({ behavior: 'smooth' });

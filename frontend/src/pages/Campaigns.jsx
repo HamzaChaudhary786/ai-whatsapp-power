@@ -98,7 +98,9 @@ export default function Campaigns() {
     promo_code: 'GALA30',
     discount_percent: 30,
     description: 'Elevate your wardrobe with our newest silk evening dresses and relaxed linen wear. Enjoy an exclusive 30% discount on all boutique collections this week!',
-    store_url: window.location.origin,
+    store_url: window.location.origin.includes('vercel.app')
+      ? window.location.origin
+      : 'https://ai-whatsapp-power-git-main-hamzachaudhary786s-projects.vercel.app',
     channels: ['WHATSAPP', 'EMAIL'],
     is_active_banner: true,
     valid_from: defaultStart,
