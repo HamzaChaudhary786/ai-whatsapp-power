@@ -5490,9 +5490,6 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
           <span>Bag</span>
         </button>
       </nav>
-
-      {/* Floating Theme Switcher Widget */}
-      <ThemeToggle variant="floating" />
     </div>
   );
 }

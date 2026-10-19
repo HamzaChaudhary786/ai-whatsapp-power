@@ -6868,3 +6868,339 @@ html, body {
   border-color: rgba(0, 0, 0, 0.1);
   color: #0f172a;
 }
+
+/* ==========================================================================
+   11. LOGIN & AUTH RESPONSIVENESS
+   ========================================================================== */
+.login-top-bar {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .login-page-wrapper {
+    padding: 16px 12px;
+    align-items: flex-start;
+    padding-top: 60px;
+    min-height: 100vh;
+  }
+
+  .login-top-bar {
+    top: 12px;
+    right: 14px;
+  }
+
+  .login-card-container {
+    padding: 24px 16px;
+    border-radius: 18px;
+    max-width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  }
+
+  .login-title {
+    font-size: 1.35rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .demo-buttons-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .demo-pill {
+    padding: 7px 4px;
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+
+  .login-form .form-input {
+    font-size: 16px !important; /* iOS zoom prevention */
+    min-height: 44px;
+  }
+
+  .login-submit-btn,
+  .browse-store-btn {
+    min-height: 46px;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .demo-buttons-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+/* ==========================================================================
+   12. CONSOLE MOBILE BOTTOM NAVIGATION BAR
+   ========================================================================== */
+.console-mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .console-mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(13, 18, 30, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 4px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Ensure content is not hidden behind the fixed bottom nav bar */
+  .main-content {
+    padding-bottom: 70px !important;
+  }
+
+  .content-body {
+    padding: 16px 12px 76px 12px !important;
+  }
+
+  .console-mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.68rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    padding: 4px 6px;
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+  }
+
+  .console-mobile-nav-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .console-mobile-nav-item:hover,
+  .console-mobile-nav-item.active {
+    color: #818cf8;
+  }
+
+  .console-mobile-nav-item.active svg {
+    color: #6366f1;
+    transform: scale(1.1);
+  }
+
+  .console-nav-badge-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .console-live-dot {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+  }
+}
+
+/* ==========================================================================
+   13. ADMIN PAGE ACTIONS & BUTTONS RESPONSIVENESS
+   ========================================================================== */
+.admin-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .admin-page-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .admin-page-actions .btn,
+  .admin-page-actions a.btn,
+  .admin-page-actions button {
+    width: 100% !important;
+    min-height: 40px !important;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  /* Primary button spans full width for top hierarchy */
+  .admin-page-actions .btn-primary {
+    grid-column: 1 / -1 !important;
+    min-height: 44px !important;
+    font-size: 0.84rem !important;
+  }
+}
+
+/* ==========================================================================
+   14. CATEGORIES MANAGEMENT (MOBILE RESPONSIVE)
+   ========================================================================== */
+.categories-page-container {
+  padding: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .categories-page-container {
+    padding: 0 0 16px 0 !important;
+  }
+
+  .category-search-bar {
+    width: 100% !important;
+  }
+
+  .category-filter-pills {
+    display: flex !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+    width: 100% !important;
+    scrollbar-width: none;
+  }
+
+  .category-filter-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categories-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* ==========================================================================
+   15. LIVE INBOX CHAT HEADER & COMMERCE TOOLBAR (MOBILE)
+   ========================================================================== */
+.live-commerce-toolbar {
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.7);
+  border-bottom: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.commerce-toolbar-buttons-grid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .live-chat-header-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 6px;
+  }
+
+  .live-chat-header-actions > * {
+    flex: 1 1 calc(50% - 6px) !important;
+    min-height: 38px !important;
+    font-size: 0.74rem !important;
+  }
+
+  .live-chat-header-actions select {
+    font-size: 16px !important; /* Prevents iOS auto-zoom */
+    min-height: 38px !important;
+  }
+
+  .live-commerce-toolbar {
+    padding: 8px 10px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .commerce-toolbar-buttons-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  .btn-commerce-action {
+    width: 100% !important;
+    min-height: 40px !important;
+    font-size: 0.74rem !important;
+    padding: 6px 8px !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  .commerce-city-tag {
+    justify-content: center !important;
+    padding-top: 2px !important;
+  }
+}
+
+/* ==========================================================================
+   16. LIGHT THEME OVERRIDES FOR NEW MOBILE COMPONENTS
+   ========================================================================== */
+[data-theme="light"] .console-mobile-bottom-nav {
+  background: rgba(255, 255, 255, 0.97);
+  border-top-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .console-mobile-nav-item {
+  color: #64748b;
+}
+
+[data-theme="light"] .console-mobile-nav-item:hover,
+[data-theme="light"] .console-mobile-nav-item.active {
+  color: #4f46e5;
+}
+
+[data-theme="light"] .live-commerce-toolbar {
+  background: rgba(248, 250, 252, 0.9);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+

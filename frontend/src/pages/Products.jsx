@@ -729,7 +729,18 @@ export default function Products({ user, onNavigateToCategories }) {
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <div className="admin-page-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {onNavigateToCategories && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onNavigateToCategories}
+              title="Manage product taxonomy categories"
+            >
+              <Layers size={16} style={{ color: 'var(--accent-indigo)' }} />
+              <span>Categories</span>
+            </button>
+          )}
           <a
             href={api.getExportCsvUrl()}
             download="boutique_catalog_export.csv"

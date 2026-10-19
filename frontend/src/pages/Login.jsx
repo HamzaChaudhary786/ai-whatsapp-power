@@ -91,6 +91,9 @@ export default function Login({ onLoginSuccess, onBrowseAsCustomer }) {
 
   return (
     <div className="login-page-wrapper">
+      <div className="login-top-bar">
+        <ThemeToggle />
+      </div>
       <div className="login-card-container">
         {/* Header / Brand */}
         <div className="login-header">
@@ -326,7 +329,6 @@ export default function Login({ onLoginSuccess, onBrowseAsCustomer }) {
           </button>
         </div>
       </div>
-      <ThemeToggle variant="floating" />
     </div>
   );
 }

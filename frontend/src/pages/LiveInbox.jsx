@@ -625,7 +625,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
         {activeConv ? (
           <>
             <div className="chat-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="live-chat-header-identity">
                 <button
                   type="button"
                   className="chat-mobile-back-btn"
@@ -636,37 +636,37 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   <ChevronLeft size={18} />
                   <span>Chats</span>
                 </button>
-                <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="live-chat-user-info">
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span>{activeConv.customer_name || 'Customer'}</span>
-                  {activeConv.customer_phone && (
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                      ({activeConv.customer_phone})
-                    </span>
-                  )}
-                  {activeConv.status === 'WAITING_HUMAN' && (
-                    <span
-                      style={{
-                        background: '#f59e0b',
-                        color: '#0f172a',
-                        fontSize: '0.68rem',
-                        fontWeight: 800,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                      }}
-                    >
-                      NEEDS HUMAN REPLY
-                    </span>
-                  )}
-                </h3>
-                <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
-                  Channel: {activeConv.channel === 'web_chat' ? 'Web AI Stylist' : 'WhatsApp Cloud API'} • ID: {activeConv.id}
-                </span>
+                    {activeConv.customer_phone && (
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                        ({activeConv.customer_phone})
+                      </span>
+                    )}
+                    {activeConv.status === 'WAITING_HUMAN' && (
+                      <span
+                        style={{
+                          background: '#f59e0b',
+                          color: '#0f172a',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                        }}
+                      >
+                        NEEDS HUMAN REPLY
+                      </span>
+                    )}
+                  </h3>
+                  <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
+                    Channel: {activeConv.channel === 'web_chat' ? 'Web AI Stylist' : 'WhatsApp Cloud API'} • ID: {activeConv.id}
+                  </span>
+                </div>
               </div>
-            </div>
 
               {/* Staff Reassignment Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="live-chat-header-actions">
                 {assignmentFeedback && (
                   <span
                     style={{
@@ -728,7 +728,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
 
                 {user && activeConv.assigned_user_id !== user.id && (
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-assign-me"
                     onClick={() => handleAssignAgent(user.id)}
                     disabled={assigning}
                     style={{ fontSize: '0.8rem', padding: '6px 12px' }}
@@ -742,33 +742,23 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
             </div>
 
             {/* Quick Commerce Actions Toolbar for Live Agent */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 16px',
-                background: 'rgba(255, 255, 255, 0.02)',
-                borderBottom: '1px solid var(--border-glass)',
-                gap: '8px',
-                flexWrap: 'wrap',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="live-commerce-toolbar">
+              <div className="commerce-toolbar-buttons-grid">
                 <button
                   type="button"
-                  className="btn"
+                  className="btn btn-commerce-action"
                   onClick={handleRequestDeliveryAddress}
                   disabled={sending}
                   style={{
                     fontSize: '0.74rem',
-                    padding: '5px 12px',
+                    padding: '6px 12px',
                     background: 'rgba(59, 130, 246, 0.15)',
                     color: '#60a5fa',
                     border: '1px solid rgba(59, 130, 246, 0.3)',
                     borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -776,23 +766,24 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   title="Send structured delivery address request to customer on WhatsApp"
                 >
                   <FileText size={13} />
-                  <span>Request Address Form</span>
+                  <span>Request Address</span>
                 </button>
 
                 <button
                   type="button"
-                  className="btn"
+                  className="btn btn-commerce-action"
                   onClick={() => setIsShareModalOpen(true)}
                   disabled={sending}
                   style={{
                     fontSize: '0.74rem',
-                    padding: '5px 12px',
+                    padding: '6px 12px',
                     background: 'rgba(168, 85, 247, 0.15)',
                     color: '#c084fc',
                     border: '1px solid rgba(168, 85, 247, 0.3)',
                     borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -800,22 +791,23 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   title="Pick product from catalog and send card with photo to WhatsApp"
                 >
                   <ShoppingBag size={13} />
-                  <span>Share Product to WhatsApp</span>
+                  <span>Share Product</span>
                 </button>
 
                 <button
                   type="button"
-                  className="btn"
+                  className="btn btn-commerce-action"
                   onClick={handleOpenOrderModal}
                   style={{
                     fontSize: '0.74rem',
-                    padding: '5px 14px',
+                    padding: '6px 12px',
                     background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
                     fontWeight: 700,
                     cursor: 'pointer',
@@ -824,35 +816,36 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   title="Book order for customer with auto-filled phone & receipt dispatched to WhatsApp"
                 >
                   <ShoppingCart size={13} />
-                  <span>Book Customer Order</span>
+                  <span>Book Order</span>
                 </button>
 
                 <button
                   type="button"
-                  className="btn"
+                  className="btn btn-commerce-action"
                   onClick={handleSendCheckoutLink}
                   disabled={sending}
                   style={{
                     fontSize: '0.74rem',
-                    padding: '5px 12px',
+                    padding: '6px 12px',
                     background: 'rgba(255, 255, 255, 0.05)',
                     color: 'var(--text-muted)',
                     border: '1px solid var(--border-glass)',
                     borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '6px',
                     cursor: 'pointer',
                   }}
                   title="Send direct self-checkout link to customer on WhatsApp"
                 >
                   <LinkIcon size={13} />
-                  <span>Send Checkout Link</span>
+                  <span>Checkout Link</span>
                 </button>
               </div>
 
               {activeConv.customer_city && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                <div className="commerce-city-tag" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                   <MapPin size={12} style={{ color: '#10b981' }} />
                   <span>Saved: {activeConv.customer_city}</span>
                 </div>

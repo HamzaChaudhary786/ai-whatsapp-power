@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client';
 
-export default function Categories() {
+export default function Categories({ user, onNavigateToProducts }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -310,7 +310,7 @@ export default function Categories() {
   };
 
   return (
-    <div style={{ padding: '24px 32px', minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div className="categories-page-container">
       {/* Toast Notification */}
       {toast && (
         <div
@@ -357,7 +357,19 @@ export default function Categories() {
         </div>
 
         {/* Global Action Bar */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="admin-page-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {onNavigateToProducts && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '9px 14px' }}
+              onClick={onNavigateToProducts}
+              title="Return to products catalog"
+            >
+              <ShoppingBag size={15} style={{ color: 'var(--primary)' }} />
+              <span>Products Catalog</span>
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-secondary"
@@ -552,7 +564,7 @@ export default function Categories() {
         }}
       >
         {/* Left: Search Input */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: '280px', flex: 1 }}>
+        <div className="category-search-bar" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
           <div style={{ position: 'relative', width: '100%' }}>
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
             <input
@@ -576,7 +588,7 @@ export default function Categories() {
         </div>
 
         {/* Center: Filter Pills */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+        <div className="category-filter-pills" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {[
             { id: 'ALL', label: `All (${categories.length})` },
             { id: 'ACTIVE', label: `Active (${activeCategoriesCount})` },
@@ -682,6 +694,7 @@ export default function Categories() {
         </div>
       ) : (
         <div
+          className="categories-cards-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',

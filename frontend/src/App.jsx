@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  LayoutDashboard,
+  MessageSquare,
+  ShoppingBag,
+  Layers,
+  ShoppingCart,
+  Menu,
+} from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -107,15 +115,15 @@ export default function App() {
       case 'inbox':
         return <LiveInbox user={user} />;
       case 'products':
-        return <Products user={user} />;
+        return <Products user={user} onNavigateToCategories={() => setActiveTab('categories')} />;
       case 'categories':
-        return <Categories user={user} />;
+        return <Categories user={user} onNavigateToProducts={() => setActiveTab('products')} />;
       case 'orders':
         return <Orders user={user} />;
       case 'analytics':
         return <Analytics user={user} />;
       case 'catalog':
-        return <Products user={user} />;
+        return <Products user={user} onNavigateToCategories={() => setActiveTab('categories')} />;
       case 'campaigns':
         return <Campaigns user={user} />;
       case 'team':
@@ -173,6 +181,67 @@ export default function App() {
         />
         <main className="content-body">{renderConsoleContent()}</main>
       </div>
+
+      {/* Console Mobile Bottom Navigation Bar */}
+      <nav className="console-mobile-bottom-nav">
+        <button
+          type="button"
+          className={`console-mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          <LayoutDashboard size={18} />
+          <span>Overview</span>
+        </button>
+
+        <button
+          type="button"
+          className={`console-mobile-nav-item ${activeTab === 'inbox' ? 'active' : ''}`}
+          onClick={() => setActiveTab('inbox')}
+        >
+          <div className="console-nav-badge-wrap">
+            <MessageSquare size={18} />
+            <span className="console-live-dot" />
+          </div>
+          <span>Inbox</span>
+        </button>
+
+        <button
+          type="button"
+          className={`console-mobile-nav-item ${activeTab === 'products' || activeTab === 'catalog' ? 'active' : ''}`}
+          onClick={() => setActiveTab('products')}
+        >
+          <ShoppingBag size={18} />
+          <span>Products</span>
+        </button>
+
+        <button
+          type="button"
+          className={`console-mobile-nav-item ${activeTab === 'categories' ? 'active' : ''}`}
+          onClick={() => setActiveTab('categories')}
+        >
+          <Layers size={18} />
+          <span>Categories</span>
+        </button>
+
+        <button
+          type="button"
+          className={`console-mobile-nav-item ${activeTab === 'orders' ? 'active' : ''}`}
+          onClick={() => setActiveTab('orders')}
+        >
+          <ShoppingCart size={18} />
+          <span>Orders</span>
+        </button>
+
+        <button
+          type="button"
+          className="console-mobile-nav-item console-nav-more"
+          onClick={() => setIsMobileSidebarOpen(true)}
+          title="Open complete navigation drawer"
+        >
+          <Menu size={18} />
+          <span>More</span>
+        </button>
+      </nav>
     </div>
   );
 }
