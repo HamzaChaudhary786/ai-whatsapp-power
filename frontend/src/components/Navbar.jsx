@@ -63,12 +63,12 @@ export default function Navbar({
 
         <button
           onClick={checkHealth}
-          className="btn btn-secondary"
+          className="btn btn-secondary nav-action-btn"
           style={{ padding: '8px 12px', fontSize: '0.8rem' }}
           title="Refresh Backend Status"
         >
           <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
-          <span>Sync</span>
+          <span className="nav-btn-text">Sync</span>
         </button>
 
         {user && (
@@ -84,18 +84,18 @@ export default function Navbar({
 
         <button
           onClick={onSwitchToStorefront}
-          className="btn btn-secondary"
+          className="btn btn-secondary nav-action-btn"
           style={{ padding: '8px 12px', fontSize: '0.8rem' }}
           title="Switch to Customer Storefront View"
         >
           <ExternalLink size={14} />
-          <span>Customer View</span>
+          <span className="nav-btn-text">Customer View</span>
         </button>
 
         {user && (
           <button
             onClick={onLogout}
-            className="btn btn-secondary"
+            className="btn btn-secondary nav-action-btn nav-logout-btn"
             style={{ padding: '8px 12px', fontSize: '0.8rem', color: '#f43f5e' }}
             title="Log out"
           >

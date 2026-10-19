@@ -1744,7 +1744,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
             {/* Wishlist Circle Button */}
             <button
               type="button"
-              className="nav-icon-circle-btn"
+              className="nav-icon-circle-btn nav-wishlist-top-btn"
               onClick={() => setIsWishlistOpen(true)}
               title="Saved Wishlist & Outfits"
               aria-label="Wishlist"
@@ -1762,7 +1762,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
             {/* Shopping Bag Circle Button */}
             <button
               type="button"
-              className="nav-icon-circle-btn"
+              className="nav-icon-circle-btn nav-cart-top-btn"
               onClick={() => setIsCartOpen(true)}
               title="Shopping Bag"
               aria-label="Shopping Bag"
@@ -2086,30 +2086,33 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
         {/* Left Column: Interactive Gemini AI Stylist */}
         <div id="stylist-chat-box" className="stylist-chat-widget card">
           <div className="chat-widget-header">
-            <div
-              className="stylist-avatar"
-              style={{
-                background: assignedStaff?.isAssigned
-                  ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
-                  : undefined,
-              }}
-            >
-              {assignedStaff?.isAssigned ? <User size={18} /> : <Sparkles size={18} />}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div className="stylist-name">
-                  {assignedStaff?.isAssigned ? `${assignedStaff.staffName}` : 'Aria — AI Fashion Stylist'}
+            <div className="chat-header-identity">
+              <div
+                className="stylist-avatar"
+                style={{
+                  background: assignedStaff?.isAssigned
+                    ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                    : undefined,
+                }}
+              >
+                {assignedStaff?.isAssigned ? <User size={18} /> : <Sparkles size={18} />}
+              </div>
+              <div className="stylist-info-block">
+                <div className="stylist-title-row">
+                  <div className="stylist-name">
+                    {assignedStaff?.isAssigned ? `${assignedStaff.staffName}` : 'Aria — AI Stylist'}
+                  </div>
+                  <span className="chat-memory-badge" title={assignedStaff?.isAssigned ? 'Live Human Assistance' : 'AI remembers your full conversation history'}>
+                    {assignedStaff?.isAssigned ? '👤 Staff Live' : '🧠 Memory Active'}
+                  </span>
                 </div>
-                <span className="chat-memory-badge" title={assignedStaff?.isAssigned ? 'Live Human Assistance' : 'AI remembers your full conversation history'}>
-                  {assignedStaff?.isAssigned ? '👤 Staff Live' : '🧠 Memory Active'}
-                </span>
-              </div>
-              <div className="stylist-status">
-                <span className="online-dot" /> {assignedStaff?.isAssigned ? 'Live Staff Connected | Assisting you' : 'Online | Ready to style you'}
+                <div className="stylist-status">
+                  <span className="online-dot" /> {assignedStaff?.isAssigned ? 'Live Staff Connected' : 'Online • Ready to style'}
+                </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+
+            <div className="chat-header-actions-group">
               {assignedStaff?.isAssigned ? (
                 <button
                   type="button"
@@ -2117,7 +2120,8 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                   onClick={handleSwitchToAi}
                   title="Switch back to AI Stylist"
                 >
-                  <Sparkles size={12} /> Switch to AI
+                  <Sparkles size={13} />
+                  <span>Switch to AI</span>
                 </button>
               ) : (
                 <button
@@ -2126,7 +2130,8 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
                   onClick={handleRequestHumanStaff}
                   title="Connect with Human Stylist"
                 >
-                  <User size={12} /> Live Staff
+                  <User size={13} />
+                  <span>Live Staff</span>
                 </button>
               )}
               <button
@@ -3029,6 +3034,7 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
               />
               {isSearchFocused && searchSuggestions.length > 0 && (
                 <div
+                  className="search-suggestions-dropdown"
                   style={{
                     position: 'absolute',
                     top: '100%',
@@ -3121,12 +3127,13 @@ export default function CustomerStorefront({ onStaffLoginClick, user, onLogout }
             borderRadius: '12px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+          <div className="catalog-filter-bar" style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
             {/* Sort Dropdown */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              <ArrowUpDown size={14} style={{ color: 'var(--primary)' }} />
+            <div className="catalog-sort-group" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              <ArrowUpDown size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
               <span style={{ fontWeight: 600 }}>Sort By:</span>
               <select
+                className="catalog-sort-select"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 style={{
