@@ -877,6 +877,7 @@ export default function Categories({ user, onNavigateToProducts }) {
       {/* ======================================================== */}
       {showAddModal && (
         <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -889,7 +890,7 @@ export default function Categories({ user, onNavigateToProducts }) {
             padding: '20px',
           }}
         >
-          <div className="glass-card" style={{ width: '520px', maxWidth: '92vw' }}>
+          <div className="glass-card modal-dialog" style={{ width: '520px', maxWidth: '92vw' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'rgba(212, 175, 55, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d4af37' }}>
@@ -1014,6 +1015,7 @@ export default function Categories({ user, onNavigateToProducts }) {
       {/* ======================================================== */}
       {showEditModal && (
         <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -1026,7 +1028,7 @@ export default function Categories({ user, onNavigateToProducts }) {
             padding: '20px',
           }}
         >
-          <div className="glass-card" style={{ width: '520px', maxWidth: '92vw' }}>
+          <div className="glass-card modal-dialog" style={{ width: '520px', maxWidth: '92vw' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8' }}>
@@ -1147,6 +1149,7 @@ export default function Categories({ user, onNavigateToProducts }) {
       {/* ======================================================== */}
       {showBulkImportModal && (
         <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -1159,7 +1162,7 @@ export default function Categories({ user, onNavigateToProducts }) {
             padding: '20px',
           }}
         >
-          <div className="glass-card" style={{ width: '640px', maxWidth: '94vw', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div className="glass-card modal-dialog" style={{ width: '640px', maxWidth: '94vw', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div>
                 <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>Bulk Categories CSV Import</h3>
@@ -1323,6 +1326,7 @@ export default function Categories({ user, onNavigateToProducts }) {
       {/* ======================================================== */}
       {categoryToDelete && (
         <div
+          className="modal-overlay"
           style={{
             position: 'fixed',
             inset: 0,
@@ -1335,7 +1339,7 @@ export default function Categories({ user, onNavigateToProducts }) {
             padding: '20px',
           }}
         >
-          <div className="glass-card" style={{ width: '460px', maxWidth: '90vw' }}>
+          <div className="glass-card modal-dialog" style={{ width: '460px', maxWidth: '90vw' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(239, 68, 68, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f87171' }}>
                 <Trash2 size={20} />

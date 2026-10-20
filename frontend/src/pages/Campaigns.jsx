@@ -262,10 +262,10 @@ export default function Campaigns() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="campaigns-tab-switcher" style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)' }}>
+        <div className="campaigns-tab-switcher">
           <button
             type="button"
-            className="btn"
+            className={`btn campaigns-tab-btn ${activeTab === 'BROADCASTS' ? 'active' : ''}`}
             style={{
               padding: '6px 16px',
               fontSize: '0.82rem',
@@ -282,7 +282,7 @@ export default function Campaigns() {
           </button>
           <button
             type="button"
-            className="btn"
+            className={`btn campaigns-tab-btn ${activeTab === 'COUPONS' ? 'active' : ''}`}
             style={{
               padding: '6px 16px',
               fontSize: '0.82rem',
@@ -376,12 +376,12 @@ export default function Campaigns() {
           </div>
 
           {/* Action Bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div className="campaigns-coupons-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
               Boutique Promotional Discount Vouchers
             </h3>
             <button
-              className="btn btn-primary"
+              className="btn btn-primary btn-add-coupon-mobile"
               style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', padding: '8px 16px' }}
               onClick={() => setIsCouponModalOpen(true)}
             >
@@ -398,25 +398,26 @@ export default function Campaigns() {
               <p>Create your first voucher to offer percentage or flat PKR discounts to shoppers.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+            <div className="coupons-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '16px' }}>
               {coupons.map((c) => (
                 <div
                   key={c.id}
-                  className="glass-card"
+                  className="glass-card coupon-item-card"
                   style={{
-                    padding: '20px',
+                    padding: '16px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     gap: '14px',
                     border: c.is_active ? '1px solid var(--border-glass)' : '1px dashed rgba(255,255,255,0.08)',
                     opacity: c.is_active ? 1 : 0.6,
+                    wordBreak: 'break-word',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '1.2rem', fontWeight: 800, fontFamily: 'monospace', color: 'var(--primary)', letterSpacing: '1px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '1.15rem', fontWeight: 800, fontFamily: 'monospace', color: 'var(--primary)', letterSpacing: '1px', wordBreak: 'break-all' }}>
                           {c.code}
                         </span>
                         <span
@@ -425,6 +426,7 @@ export default function Campaigns() {
                             borderRadius: '4px',
                             fontSize: '0.7rem',
                             fontWeight: 700,
+                            whiteSpace: 'nowrap',
                             background: c.discount_type === 'PERCENTAGE' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(245, 158, 11, 0.15)',
                             color: c.discount_type === 'PERCENTAGE' ? '#818cf8' : '#fbbf24',
                           }}
@@ -432,7 +434,7 @@ export default function Campaigns() {
                           {c.discount_type === 'PERCENTAGE' ? `${c.discount_value}% OFF` : `Flat PKR ${Number(c.discount_value).toLocaleString()}`}
                         </span>
                       </div>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '6px', lineHeight: 1.4 }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '6px', lineHeight: 1.4, wordBreak: 'break-word' }}>
                         {c.description || 'Promotional boutique voucher code.'}
                       </p>
                     </div>
@@ -441,28 +443,28 @@ export default function Campaigns() {
                       type="button"
                       onClick={() => handleDeleteCoupon(c.id, c.code)}
                       title="Delete voucher"
-                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', flexShrink: 0 }}
                     >
                       <Trash2 size={16} />
                     </button>
                   </div>
 
-                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem', color: 'var(--text-dim)', flexWrap: 'wrap', gap: '8px' }}>
-                    <div>
-                      <div>
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.76rem', color: 'var(--text-dim)', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ wordBreak: 'break-word' }}>
                         Min Cart: <b>PKR {Number(c.min_order_amount || 0).toLocaleString()}</b>
                         {c.max_discount_amount && (
                           <span> • Cap: <b>PKR {Number(c.max_discount_amount).toLocaleString()}</b></span>
                         )}
                       </div>
                       {c.expiry_date && (
-                        <div style={{ marginTop: '4px', fontSize: '0.74rem', color: new Date() > new Date(c.expiry_date) ? '#ef4444' : '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{ marginTop: '4px', fontSize: '0.72rem', color: new Date() > new Date(c.expiry_date) ? '#ef4444' : '#10b981', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
                           <Clock size={12} />
-                          {new Date() > new Date(c.expiry_date) ? `Expired: ${formatValidity(c.expiry_date)}` : `Expires: ${formatValidity(c.expiry_date)}`}
+                          <span>{new Date() > new Date(c.expiry_date) ? `Expired: ${formatValidity(c.expiry_date)}` : `Expires: ${formatValidity(c.expiry_date)}`}</span>
                         </div>
                       )}
                     </div>
-                    <span style={{ color: !c.is_active || (c.expiry_date && new Date() > new Date(c.expiry_date)) ? '#f87171' : '#10b981', fontWeight: 700 }}>
+                    <span style={{ color: !c.is_active || (c.expiry_date && new Date() > new Date(c.expiry_date)) ? '#f87171' : '#10b981', fontWeight: 700, whiteSpace: 'nowrap' }}>
                       {!c.is_active ? '○ Inactive' : c.expiry_date && new Date() > new Date(c.expiry_date) ? '🔴 Expired' : '● Active'}
                     </span>
                   </div>
@@ -699,7 +701,7 @@ export default function Campaigns() {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="composer-code-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label className="form-label" style={{ fontSize: '0.8rem' }}>Promo Voucher Code</label>
                 <div style={{ position: 'relative' }}>
@@ -816,7 +818,7 @@ export default function Campaigns() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="composer-datetime-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
                     Valid From (Start Date & Time)
@@ -1069,32 +1071,22 @@ export default function Campaigns() {
             {campaigns.map((camp) => (
               <div
                 key={camp.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '14px 18px',
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid var(--border-glass)',
-                  borderRadius: '10px',
-                  flexWrap: 'wrap',
-                  gap: '12px',
-                }}
+                className="broadcast-history-row"
               >
-                <div>
+                <div className="broadcast-history-info">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f8fafc' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#f8fafc', wordBreak: 'break-word' }}>
                       {camp.title}
                     </span>
                     {camp.is_active_banner && (
-                      <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700, background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8', whiteSpace: 'nowrap' }}>
                         ★ Live Store Banner
                       </span>
                     )}
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                     <span>Code: <b style={{ color: '#a5b4fc' }}>{camp.promo_code}</b> ({camp.discount_percent}% OFF)</span>
-                    <span>• Created: {new Date(camp.created_at).toLocaleDateString()}</span>
+                    <span>• {new Date(camp.created_at).toLocaleDateString()}</span>
                     {camp.valid_until ? (
                       (() => {
                         const vStatus = getValidityStatus(camp.valid_until);
@@ -1110,6 +1102,7 @@ export default function Campaigns() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '4px',
+                              whiteSpace: 'nowrap',
                             }}
                           >
                             <Clock size={11} /> {vStatus.label}
@@ -1117,16 +1110,16 @@ export default function Campaigns() {
                         );
                       })()
                     ) : (
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>
                         ⏳ Ongoing (No Expiration)
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="broadcast-history-actions">
                   {camp.stats && (
-                    <div style={{ fontSize: '0.8rem', display: 'flex', gap: '10px' }}>
+                    <div style={{ fontSize: '0.8rem', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                       <span style={{ color: '#10b981' }}>
                         WA: <b>{camp.stats.whatsapp_sent || 0}</b> sent
                       </span>
@@ -1142,6 +1135,7 @@ export default function Campaigns() {
                       borderRadius: 'var(--radius-full)',
                       fontSize: '0.72rem',
                       fontWeight: 700,
+                      whiteSpace: 'nowrap',
                       background: camp.status === 'SENT' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(99, 102, 241, 0.2)',
                       color: camp.status === 'SENT' ? '#10b981' : '#a5b4fc',
                     }}

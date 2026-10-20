@@ -49,30 +49,30 @@ export default function Navbar({
       </div>
 
       <div className="nav-right">
-        <div className="status-badge">
+        <div className="status-badge" title={`API: ${health.status} (${health.database})`}>
           <div
             className="pulse-dot"
             style={{
               background: health.status === 'healthy' ? '#10b981' : '#f43f5e',
             }}
           />
-          <span>
-            API: {health.status === 'healthy' ? 'Online' : 'Offline'} ({health.database})
+          <span className="status-badge-text">
+            {health.status === 'healthy' ? 'Online' : 'Offline'}
           </span>
         </div>
 
         <button
           onClick={checkHealth}
           className="btn btn-secondary nav-action-btn"
-          style={{ padding: '8px 12px', fontSize: '0.8rem' }}
-          title="Refresh Backend Status"
+          title="Sync & refresh backend status"
+          aria-label="Sync"
         >
           <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
           <span className="nav-btn-text">Sync</span>
         </button>
 
         {user && (
-          <div className="nav-user-chip">
+          <div className="nav-user-chip" title={`${user.email} (${user.role})`}>
             <span className="nav-user-email">{user.email}</span>
             <span className={`role-badge role-${user.role.toLowerCase()}`}>
               {user.role}
@@ -80,24 +80,26 @@ export default function Navbar({
           </div>
         )}
 
-        <ThemeToggle />
+        <div className="nav-theme-wrap">
+          <ThemeToggle />
+        </div>
 
         <button
           onClick={onSwitchToStorefront}
-          className="btn btn-secondary nav-action-btn"
-          style={{ padding: '8px 12px', fontSize: '0.8rem' }}
+          className="btn btn-secondary nav-action-btn nav-storefront-btn"
           title="Switch to Customer Storefront View"
+          aria-label="Customer View"
         >
           <ExternalLink size={14} />
-          <span className="nav-btn-text">Customer View</span>
+          <span className="nav-btn-text">Store</span>
         </button>
 
         {user && (
           <button
             onClick={onLogout}
             className="btn btn-secondary nav-action-btn nav-logout-btn"
-            style={{ padding: '8px 12px', fontSize: '0.8rem', color: '#f43f5e' }}
-            title="Log out"
+            title="Log out of console"
+            aria-label="Logout"
           >
             <LogOut size={14} />
           </button>

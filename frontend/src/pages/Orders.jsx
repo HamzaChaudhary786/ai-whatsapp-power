@@ -375,12 +375,12 @@ export default function Orders() {
           </button>
 
           {/* Filter Pills */}
-          <div className="orders-filter-scroll-bar" style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
+          <div className="orders-filter-scroll-bar">
             {['ALL', 'PENDING', 'CONFIRMED', 'SHIPPED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED', 'RETURNS', 'CANCELLED'].map((st) => (
               <button
                 key={st}
                 onClick={() => setFilterStatus(st)}
-                className="btn"
+                className={`btn orders-filter-pill-btn ${filterStatus === st ? 'active' : ''}`}
                 style={{
                   padding: '6px 12px',
                   fontSize: '0.75rem',
@@ -1033,90 +1033,84 @@ export default function Orders() {
           </div>
         ) : (
           filtered.map((ord) => (
-            <div key={ord.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-glass)', paddingBottom: '12px', flexWrap: 'wrap', gap: '12px' }}>
-                <div>
-                  <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary)', marginRight: '12px' }}>
-                    {ord.order_number}
-                  </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Customer: {ord.address_snapshot?.full_name || ord.customer_id?.slice(-8)} • Date: {new Date(ord.created_at).toLocaleString()}
-                  </span>
-
-                  {/* Courier Partner Badge if booked */}
-                  {ord.tracking_number && (
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginLeft: '12px', background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem', color: '#38bdf8' }}>
-                      <Truck size={12} />
-                      <span>{ord.courier_partner || 'Trax Logistics'}</span>
-                      <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>#{ord.tracking_number}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="order-card-actions-bar" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                  {/* Status Pill */}
-                  <span
-                    style={{
-                      padding: '4px 12px',
-                      borderRadius: 'var(--radius-full)',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      background:
-                        ord.status === 'DELIVERED'
-                          ? 'rgba(16, 185, 129, 0.2)'
-                          : ord.status === 'RETURNED'
-                          ? 'rgba(234, 179, 8, 0.2)'
-                          : ord.status === 'CANCELLED'
-                          ? 'rgba(239, 68, 68, 0.2)'
-                          : ord.status === 'OUT_FOR_DELIVERY'
-                          ? 'rgba(249, 115, 22, 0.2)'
-                          : ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT'
-                          ? 'rgba(59, 130, 246, 0.2)'
-                          : ord.status === 'CONFIRMED'
-                          ? 'rgba(245, 158, 11, 0.2)'
-                          : 'rgba(99, 102, 241, 0.2)',
-                      color:
-                        ord.status === 'DELIVERED'
-                          ? '#10b981'
-                          : ord.status === 'RETURNED'
-                          ? '#facc15'
-                          : ord.status === 'CANCELLED'
-                          ? '#ef4444'
-                          : ord.status === 'OUT_FOR_DELIVERY'
-                          ? '#fb923c'
-                          : ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT'
-                          ? '#60a5fa'
-                          : ord.status === 'CONFIRMED'
-                          ? '#fbbf24'
-                          : '#a5b4fc',
-                    }}
-                  >
-                    {ord.status?.replace('_', ' ')}
-                  </span>
-
-                  {/* Restocked Indicator */}
-                  {ord.inventory_restored && (
+            <div key={ord.id} className="glass-card order-card">
+              <div className="order-card-header">
+                <div className="order-card-meta-wrap">
+                  <div className="order-card-title-row">
+                    <span className="order-number-text">
+                      {ord.order_number}
+                    </span>
                     <span
                       style={{
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        fontSize: '0.72rem',
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        fontSize: '0.74rem',
                         fontWeight: 700,
-                        background: 'rgba(16, 185, 129, 0.15)',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        color: '#34d399',
+                        whiteSpace: 'nowrap',
+                        background:
+                          ord.status === 'DELIVERED'
+                            ? 'rgba(16, 185, 129, 0.2)'
+                            : ord.status === 'RETURNED'
+                            ? 'rgba(234, 179, 8, 0.2)'
+                            : ord.status === 'CANCELLED'
+                            ? 'rgba(239, 68, 68, 0.2)'
+                            : ord.status === 'OUT_FOR_DELIVERY'
+                            ? 'rgba(249, 115, 22, 0.2)'
+                            : ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT'
+                            ? 'rgba(59, 130, 246, 0.2)'
+                            : ord.status === 'CONFIRMED'
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(99, 102, 241, 0.2)',
+                        color:
+                          ord.status === 'DELIVERED'
+                            ? '#10b981'
+                            : ord.status === 'RETURNED'
+                            ? '#facc15'
+                            : ord.status === 'CANCELLED'
+                            ? '#ef4444'
+                            : ord.status === 'OUT_FOR_DELIVERY'
+                            ? '#fb923c'
+                            : ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT'
+                            ? '#60a5fa'
+                            : ord.status === 'CONFIRMED'
+                            ? '#fbbf24'
+                            : '#a5b4fc',
                       }}
-                      title="Stock units were automatically replenished back into catalog"
                     >
-                      ✓ Restocked to Inventory
+                      {ord.status?.replace('_', ' ')}
                     </span>
-                  )}
+                  </div>
 
+                  <div className="order-card-sub-info">
+                    <span>
+                      Customer: <b>{ord.address_snapshot?.full_name || ord.customer_id?.slice(-8)}</b>
+                    </span>
+                    <span style={{ color: 'var(--text-dim)' }}>•</span>
+                    <span>{new Date(ord.created_at).toLocaleDateString()} {new Date(ord.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+
+                    {/* Courier Partner Badge if booked */}
+                    {ord.tracking_number && (
+                      <span className="order-courier-tag">
+                        <Truck size={12} />
+                        <span>{ord.courier_partner || 'Trax Logistics'}</span>
+                        <code style={{ fontWeight: 700 }}>#{ord.tracking_number}</code>
+                      </span>
+                    )}
+
+                    {/* Restocked Indicator */}
+                    {ord.inventory_restored && (
+                      <span className="order-restocked-tag" title="Stock units were automatically replenished back into catalog">
+                        ✓ Restocked
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="order-card-actions-bar">
                   {/* Tracking Button if tracking exists */}
                   {(ord.tracking_number || ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT' || ord.status === 'OUT_FOR_DELIVERY' || ord.status === 'DELIVERED') && (
                     <button
-                      className="btn btn-secondary"
-                      style={{ fontSize: '0.75rem', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      className="btn btn-secondary btn-order-action"
                       onClick={() => handleOpenTrackingModal(ord.tracking_number || ord.order_number)}
                     >
                       <Search size={13} />
@@ -1127,8 +1121,7 @@ export default function Orders() {
                   {/* Print AWB Slip Button */}
                   {ord.tracking_number && (
                     <button
-                      className="btn btn-secondary"
-                      style={{ fontSize: '0.75rem', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      className="btn btn-secondary btn-order-action"
                       onClick={() => handleOpenSlipModal(ord.order_number)}
                     >
                       <Printer size={13} />
@@ -1137,8 +1130,7 @@ export default function Orders() {
                   )}
 
                   <button
-                    className="btn btn-secondary"
-                    style={{ fontSize: '0.75rem', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    className="btn btn-secondary btn-order-action"
                     title="Resend WhatsApp & Email confirmation message to customer"
                     onClick={async () => {
                       try {
@@ -1155,7 +1147,7 @@ export default function Orders() {
 
                   {/* Quick Status Action Buttons */}
                   {ord.status === 'PENDING' && (
-                    <button className="btn btn-primary" style={{ fontSize: '0.75rem', padding: '6px 12px' }} onClick={() => handleUpdateStatus(ord.id, 'CONFIRMED')}>
+                    <button className="btn btn-primary btn-order-primary-action" onClick={() => handleUpdateStatus(ord.id, 'CONFIRMED')}>
                       Confirm Order
                     </button>
                   )}
@@ -1163,8 +1155,8 @@ export default function Orders() {
                   {/* Major Courier Dispatch Button */}
                   {(ord.status === 'CONFIRMED' || ord.status === 'PROCESSING') && (
                     <button
-                      className="btn btn-primary"
-                      style={{ fontSize: '0.75rem', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '5px', background: 'linear-gradient(135deg, #4f46e5, #06b6d4)' }}
+                      className="btn btn-primary btn-order-primary-action"
+                      style={{ background: 'linear-gradient(135deg, #4f46e5, #06b6d4)' }}
                       onClick={() => handleOpenCourierModal(ord)}
                     >
                       <Truck size={14} />
@@ -1173,23 +1165,21 @@ export default function Orders() {
                   )}
 
                   {(ord.status === 'SHIPPED' || ord.status === 'IN_TRANSIT') && (
-                    <button className="btn btn-primary" style={{ fontSize: '0.75rem', padding: '6px 12px' }} onClick={() => handleUpdateStatus(ord.id, 'OUT_FOR_DELIVERY')}>
+                    <button className="btn btn-primary btn-order-primary-action" onClick={() => handleUpdateStatus(ord.id, 'OUT_FOR_DELIVERY')}>
                       Out for Delivery
                     </button>
                   )}
 
                   {ord.status === 'OUT_FOR_DELIVERY' && (
-                    <button className="btn btn-primary" style={{ fontSize: '0.75rem', padding: '6px 12px', background: '#10b981' }} onClick={() => handleUpdateStatus(ord.id, 'DELIVERED')}>
+                    <button className="btn btn-primary btn-order-primary-action" style={{ background: '#10b981' }} onClick={() => handleUpdateStatus(ord.id, 'DELIVERED')}>
                       Mark Delivered
                     </button>
                   )}
 
                   {ord.status === 'DELIVERED' && (
                     <button
-                      className="btn"
+                      className="btn btn-order-action btn-return-action"
                       style={{
-                        fontSize: '0.75rem',
-                        padding: '6px 12px',
                         background: 'rgba(234, 179, 8, 0.12)',
                         border: '1px solid rgba(234, 179, 8, 0.4)',
                         color: '#facc15',
@@ -1207,10 +1197,8 @@ export default function Orders() {
 
                   {(ord.status === 'PENDING' || ord.status === 'CONFIRMED') && (
                     <button
-                      className="btn"
+                      className="btn btn-order-action btn-cancel-action"
                       style={{
-                        fontSize: '0.75rem',
-                        padding: '6px 12px',
                         background: 'rgba(239, 68, 68, 0.1)',
                         border: '1px solid rgba(239, 68, 68, 0.4)',
                         color: '#ef4444',
@@ -1230,16 +1218,16 @@ export default function Orders() {
 
               {/* Customer Return / Exchange Request Notification */}
               {ord.return_status === 'REQUESTED' && (
-                <div style={{ background: 'rgba(234, 179, 8, 0.12)', border: '1px solid rgba(234, 179, 8, 0.35)', borderRadius: '8px', padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                <div className="order-return-request-alert">
                   <div>
                     <div style={{ color: '#facc15', fontWeight: 700, fontSize: '0.85rem' }}>
                       ⚠️ Customer Requested 7-Day Return / Size Exchange
                     </div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '2px' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '2px', wordBreak: 'break-word' }}>
                       Reason: <strong>{ord.return_reason}</strong> {ord.return_details ? `— "${ord.return_details}"` : ''}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div className="order-return-actions">
                     <button
                       className="btn"
                       style={{ background: '#10b981', color: '#fff', fontSize: '0.76rem', padding: '6px 14px', fontWeight: 700, borderRadius: '6px' }}
@@ -1260,53 +1248,36 @@ export default function Orders() {
 
               {/* Cancellation Reason if present */}
               {ord.cancellation_reason && (
-                <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '6px', padding: '6px 12px', fontSize: '0.76rem', color: '#fca5a5' }}>
+                <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '6px', padding: '6px 12px', fontSize: '0.76rem', color: '#fca5a5', wordBreak: 'break-word' }}>
                   Cancelled by Customer: {ord.cancellation_reason}
                 </div>
               )}
 
-              {/* Order Items & Address */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div>
+              {/* Order Items & Address Responsive Grid */}
+              <div className="order-card-content-grid">
+                <div className="order-purchased-items-col">
                   <h4 style={{ fontSize: '0.82rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '8px' }}>
                     Purchased Items
                   </h4>
                   {ord.items?.map((it, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '8px 0',
-                        borderBottom: '1px solid rgba(255,255,255,0.04)',
-                        fontSize: '0.88rem',
-                      }}
-                    >
+                    <div key={idx} className="order-item-row">
                       <img
                         src={
                           it.image_url ||
                           'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=300&q=80'
                         }
                         alt={it.name}
-                        style={{
-                          width: '46px',
-                          height: '46px',
-                          borderRadius: '8px',
-                          objectFit: 'cover',
-                          border: '1px solid var(--border-glass)',
-                          flexShrink: 0,
-                        }}
+                        className="order-item-img"
                         onError={(e) => {
                           e.target.src =
                             'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=300&q=80';
                         }}
                       />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div className="order-item-details">
+                        <div className="order-item-title">
                           {it.name}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <div className="order-item-sub-tags">
                           <span>SKU: <code>{it.sku || 'Std'}</code></span>
                           {(it.color && it.color !== 'Standard') && (
                             <span style={{ color: '#38bdf8' }}>Color: <b>{it.color}</b></span>
@@ -1317,7 +1288,7 @@ export default function Orders() {
                           <span>Qty: <b>{it.quantity}</b></span>
                         </div>
                       </div>
-                      <div style={{ fontWeight: 700, color: 'var(--primary)', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <div className="order-item-price-tag">
                         PKR {it.total_price?.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                     </div>
@@ -1336,17 +1307,17 @@ export default function Orders() {
                   )}
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: '8px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
                     <span>Total Amount:</span>
-                    <span style={{ color: 'var(--primary)' }}>PKR {ord.total?.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span style={{ color: 'var(--primary)', fontSize: '1rem' }}>PKR {ord.total?.toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 
-                <div>
+                <div className="order-customer-profile-col">
                   <h4 style={{ fontSize: '0.82rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '8px' }}>
                     Customer Delivery Profile
                   </h4>
-                  <div style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+                  <div className="order-delivery-profile-box">
                     {ord.address_snapshot?.full_name && (
-                      <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '0.95rem' }}>
+                      <div style={{ color: '#f1f5f9', fontWeight: 600, fontSize: '0.95rem', marginBottom: '4px' }}>
                         👤 {ord.address_snapshot.full_name}
                       </div>
                     )}
@@ -1354,10 +1325,10 @@ export default function Orders() {
                     <div>🏙️ {ord.address_snapshot?.city || ''}, {ord.address_snapshot?.country || 'Pakistan'}</div>
                     <div>📱 WhatsApp: <b style={{ color: '#10b981' }}>{ord.address_snapshot?.phone || 'Via WhatsApp'}</b></div>
                     {ord.address_snapshot?.email && (
-                      <div>✉️ Email: <i>{ord.address_snapshot.email}</i></div>
+                      <div style={{ wordBreak: 'break-all' }}>✉️ Email: <i>{ord.address_snapshot.email}</i></div>
                     )}
                     {ord.estimated_delivery && (
-                      <div style={{ marginTop: '4px', color: '#38bdf8', fontSize: '0.82rem' }}>
+                      <div style={{ marginTop: '6px', color: '#38bdf8', fontSize: '0.82rem' }}>
                         ⏳ Est. Arrival: <b>{ord.estimated_delivery}</b>
                       </div>
                     )}

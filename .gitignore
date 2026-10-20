@@ -17,6 +17,7 @@ dist/
 build/
 .npm
 *.log
+*.timestamp-*.mjs
 
 # ML & Artifacts
 ml/artifacts/*.pkl

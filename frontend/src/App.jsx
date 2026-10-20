@@ -64,6 +64,12 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isMobileInboxChatActive, setIsMobileInboxChatActive] = useState(false);
+
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    setIsMobileInboxChatActive(false);
+  };
 
   const handleLoginSuccess = (authenticatedUser) => {
     setUser(authenticatedUser);
@@ -111,19 +117,24 @@ export default function App() {
   const renderConsoleContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard setActiveTab={setActiveTab} user={user} />;
+        return <Dashboard setActiveTab={handleTabChange} user={user} />;
       case 'inbox':
-        return <LiveInbox user={user} />;
+        return (
+          <LiveInbox
+            user={user}
+            onActiveConvChange={(isActive) => setIsMobileInboxChatActive(Boolean(isActive))}
+          />
+        );
       case 'products':
-        return <Products user={user} onNavigateToCategories={() => setActiveTab('categories')} />;
+        return <Products user={user} onNavigateToCategories={() => handleTabChange('categories')} />;
       case 'categories':
-        return <Categories user={user} onNavigateToProducts={() => setActiveTab('products')} />;
+        return <Categories user={user} onNavigateToProducts={() => handleTabChange('products')} />;
       case 'orders':
         return <Orders user={user} />;
       case 'analytics':
         return <Analytics user={user} />;
       case 'catalog':
-        return <Products user={user} onNavigateToCategories={() => setActiveTab('categories')} />;
+        return <Products user={user} onNavigateToCategories={() => handleTabChange('categories')} />;
       case 'campaigns':
         return <Campaigns user={user} />;
       case 'team':
@@ -154,7 +165,11 @@ export default function App() {
   };
 
   return (
-    <div className="app-container">
+    <div
+      className={`app-container ${
+        activeTab === 'inbox' && isMobileInboxChatActive ? 'inbox-chat-active-mode' : ''
+      }`}
+    >
       {isMobileSidebarOpen && (
         <div
           className="sidebar-backdrop"
@@ -164,7 +179,7 @@ export default function App() {
       )}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         user={user}
         onLogout={handleLogout}
         onSwitchToStorefront={() => setViewMode('STOREFRONT')}
@@ -179,15 +194,25 @@ export default function App() {
           onSwitchToStorefront={() => setViewMode('STOREFRONT')}
           onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
         />
-        <main className="content-body">{renderConsoleContent()}</main>
+        <main
+          className={`content-body ${activeTab === 'inbox' ? 'content-body-inbox' : ''} ${
+            activeTab === 'inbox' && isMobileInboxChatActive ? 'content-body-inbox-fullscreen' : ''
+          }`}
+        >
+          {renderConsoleContent()}
+        </main>
       </div>
 
       {/* Console Mobile Bottom Navigation Bar */}
-      <nav className="console-mobile-bottom-nav">
+      <nav
+        className={`console-mobile-bottom-nav ${
+          activeTab === 'inbox' && isMobileInboxChatActive ? 'console-nav-hidden' : ''
+        }`}
+      >
         <button
           type="button"
           className={`console-mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
+          onClick={() => handleTabChange('dashboard')}
         >
           <LayoutDashboard size={18} />
           <span>Overview</span>
@@ -196,7 +221,7 @@ export default function App() {
         <button
           type="button"
           className={`console-mobile-nav-item ${activeTab === 'inbox' ? 'active' : ''}`}
-          onClick={() => setActiveTab('inbox')}
+          onClick={() => handleTabChange('inbox')}
         >
           <div className="console-nav-badge-wrap">
             <MessageSquare size={18} />
@@ -207,8 +232,10 @@ export default function App() {
 
         <button
           type="button"
-          className={`console-mobile-nav-item ${activeTab === 'products' || activeTab === 'catalog' ? 'active' : ''}`}
-          onClick={() => setActiveTab('products')}
+          className={`console-mobile-nav-item ${
+            activeTab === 'products' || activeTab === 'catalog' ? 'active' : ''
+          }`}
+          onClick={() => handleTabChange('products')}
         >
           <ShoppingBag size={18} />
           <span>Products</span>
@@ -217,7 +244,7 @@ export default function App() {
         <button
           type="button"
           className={`console-mobile-nav-item ${activeTab === 'categories' ? 'active' : ''}`}
-          onClick={() => setActiveTab('categories')}
+          onClick={() => handleTabChange('categories')}
         >
           <Layers size={18} />
           <span>Categories</span>
@@ -226,7 +253,7 @@ export default function App() {
         <button
           type="button"
           className={`console-mobile-nav-item ${activeTab === 'orders' ? 'active' : ''}`}
-          onClick={() => setActiveTab('orders')}
+          onClick={() => handleTabChange('orders')}
         >
           <ShoppingCart size={18} />
           <span>Orders</span>

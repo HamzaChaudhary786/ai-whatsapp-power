@@ -6208,43 +6208,76 @@ html, body {
     font-size: 0.95rem;
   }
 
-  .chat-messages-container {
-    padding: 12px;
+  .chat-messages-scroll {
+    padding: 12px 10px;
     gap: 12px;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .chat-message-bubble {
-    font-size: 0.84rem;
-    line-height: 1.45;
+  .chat-bubble {
+    max-width: 88% !important;
+    font-size: 0.86rem !important;
+    line-height: 1.45 !important;
+    padding: 10px 14px !important;
   }
 
   .chat-visual-confirm-card {
     padding: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-visual-img-wrap {
-    width: 56px !important;
-    height: 56px !important;
+    width: 60px !important;
+    height: 60px !important;
+    flex-shrink: 0 !important;
   }
 
   .chat-visual-actions {
     flex-direction: column;
     gap: 6px;
+    width: 100%;
+    margin-top: 8px;
   }
 
   .chat-visual-actions .btn-chat-action-primary,
   .chat-visual-actions .btn-chat-action-secondary,
   .chat-visual-actions .btn-smart-mini {
-    width: 100%;
-    justify-content: center;
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 38px !important;
+    font-size: 0.78rem !important;
+    box-sizing: border-box !important;
   }
 
-  .chat-input-row {
+  .chat-input-bar {
     padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.95);
   }
 
   .chat-input-field {
+    flex: 1;
+    min-width: 0;
     font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    min-height: 40px;
+    padding: 8px 14px !important;
+  }
+
+  .chat-send-btn {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
   }
 }
 
@@ -6352,13 +6385,23 @@ html, body {
   .quick-prompts-row {
     padding: 8px 12px;
     gap: 6px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .quick-prompts-row::-webkit-scrollbar {
+    display: none;
   }
 
   .quick-prompt-chip {
-    padding: 4px 10px;
-    font-size: 0.72rem;
+    padding: 6px 12px !important;
+    font-size: 0.74rem !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    border-radius: var(--radius-full) !important;
   }
 }
 
@@ -7340,44 +7383,150 @@ html, body {
     font-size: 0.74rem !important;
   }
 
+  /* Order Card Responsiveness */
+  .order-card-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
   .order-card-actions-bar {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 6px !important;
     width: 100% !important;
-    margin-top: 10px !important;
+    margin-top: 8px !important;
   }
 
-  .order-card-actions-bar > * {
+  .btn-order-primary-action {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+
+  .btn-order-action {
     width: 100% !important;
     min-height: 38px !important;
-    font-size: 0.74rem !important;
-    padding: 6px 8px !important;
     justify-content: center !important;
+    font-size: 0.74rem !important;
+    padding: 6px 4px !important;
     text-align: center !important;
     box-sizing: border-box !important;
     white-space: nowrap !important;
   }
 
-  .order-card-actions-bar .btn-primary {
-    grid-column: 1 / -1 !important;
-    min-height: 42px !important;
-    font-size: 0.8rem !important;
+  .order-card-content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .order-item-row {
+    gap: 10px !important;
+    padding: 8px 0 !important;
+  }
+
+  .order-item-img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .order-item-details {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .order-item-title {
+    font-size: 0.85rem !important;
+    word-break: break-word !important;
+  }
+
+  .order-item-price-tag {
+    font-size: 0.82rem !important;
+    white-space: nowrap !important;
+  }
+
+  .order-delivery-profile-box {
+    font-size: 0.82rem !important;
+    padding: 10px !important;
+    word-break: break-word !important;
+  }
+
+  .order-return-request-alert {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  .order-return-actions {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  .order-return-actions button {
+    width: 100% !important;
+    min-height: 36px !important;
+    justify-content: center !important;
+    font-size: 0.74rem !important;
+    padding: 6px 4px !important;
+    text-align: center !important;
   }
 }
 
 /* ==========================================================================
-   20. LIVE WHATSAPP INBOX (STAFF & ADMIN DESK) RESPONSIVENESS
+   20. LIVE WHATSAPP INBOX (STAFF & ADMIN DESK) MOBILE RESPONSIVENESS
    ========================================================================== */
+.content-body-inbox {
+  padding: 0 !important;
+}
+
+/* Hide console bottom nav when live chat is active */
+.console-mobile-bottom-nav.console-nav-hidden,
+body:has(.chat-container.has-active) .console-mobile-bottom-nav,
+.app-container.inbox-chat-active-mode .console-mobile-bottom-nav {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
+  .app-container.inbox-chat-active-mode .main-content {
+    padding-bottom: 0 !important;
+    overflow: hidden !important;
+    max-height: 100dvh !important;
+    height: 100dvh !important;
+  }
+
+  .content-body.content-body-inbox {
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content-body.content-body-inbox.content-body-inbox-fullscreen {
+    height: calc(100dvh - 56px) !important;
+    max-height: calc(100dvh - 56px) !important;
+  }
+
   .chat-container {
-    height: calc(100dvh - 146px) !important;
-    max-height: calc(100dvh - 146px) !important;
+    height: calc(100dvh - 120px) !important;
+    max-height: calc(100dvh - 120px) !important;
+    border: none !important;
+    border-radius: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow: hidden !important;
-    border-radius: 12px !important;
     width: 100% !important;
+    overflow: hidden !important;
+    background: #090d16 !important;
+  }
+
+  .chat-container.has-active {
+    height: calc(100dvh - 56px) !important;
+    max-height: calc(100dvh - 56px) !important;
   }
 
   .chat-container.has-active .chat-sidebar {
@@ -7391,6 +7540,7 @@ html, body {
     height: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
+    position: relative !important;
   }
 
   .chat-container:not(.has-active) .chat-sidebar {
@@ -7399,19 +7549,26 @@ html, body {
     width: 100% !important;
     height: 100% !important;
     min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   .chat-container:not(.has-active) .chat-main {
     display: none !important;
   }
 
+  /* Compact Native WhatsApp-like Chat Header on Mobile */
   .chat-header {
     height: auto !important;
     min-height: unset !important;
-    padding: 10px 12px !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
+    padding: 8px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    background: rgba(15, 22, 36, 0.98) !important;
+    border-bottom: 1px solid var(--border-glass) !important;
     flex-shrink: 0 !important;
+    z-index: 10 !important;
   }
 
   .live-chat-header-identity {
@@ -7421,40 +7578,206 @@ html, body {
     width: 100% !important;
   }
 
+  .chat-mobile-back-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    background: rgba(99, 102, 241, 0.2) !important;
+    border: 1px solid rgba(99, 102, 241, 0.4) !important;
+    color: #e0e7ff !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    min-height: 36px !important;
+    touch-action: manipulation !important;
+  }
+
+  .chat-mobile-back-btn:active {
+    background: rgba(99, 102, 241, 0.35) !important;
+    transform: scale(0.96);
+  }
+
+  .live-chat-user-info {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .live-chat-customer-name {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    line-height: 1.25 !important;
+  }
+
+  .live-chat-phone-tag {
+    font-size: 0.74rem !important;
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+  }
+
+  .live-chat-badge-human {
+    background: #f59e0b !important;
+    color: #0f172a !important;
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    white-space: nowrap !important;
+  }
+
+  .live-chat-channel-sub {
+    font-size: 0.7rem !important;
+    color: var(--text-dim) !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Header action controls (Reassign, Back to AI, Take Over) */
   .live-chat-header-actions {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    display: flex !important;
+    align-items: center !important;
     gap: 6px !important;
     width: 100% !important;
-    margin-top: 4px !important;
+    margin-top: 2px !important;
+    flex-wrap: wrap !important;
   }
 
   .live-chat-header-actions .reassign-dropdown-wrap {
-    grid-column: 1 / -1 !important;
-    width: 100% !important;
+    flex: 1 1 140px !important;
+    min-width: 120px !important;
+    width: auto !important;
   }
 
   .live-chat-header-actions .reassign-select {
     width: 100% !important;
-    font-size: 16px !important;
-    min-height: 38px !important;
+    font-size: 0.76rem !important;
+    min-height: 34px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
   }
 
-  .live-chat-header-actions .btn-resolve-ai {
-    grid-column: span 1 !important;
-    width: 100% !important;
-    min-height: 38px !important;
-    font-size: 0.74rem !important;
-    justify-content: center !important;
-    padding: 6px 8px !important;
-  }
-
+  .live-chat-header-actions .btn-resolve-ai,
   .live-chat-header-actions .btn-assign-me {
-    grid-column: span 1 !important;
-    width: 100% !important;
-    min-height: 38px !important;
-    font-size: 0.74rem !important;
+    flex: 1 1 auto !important;
+    min-width: 80px !important;
+    font-size: 0.72rem !important;
+    padding: 6px 10px !important;
+    min-height: 34px !important;
+    white-space: nowrap !important;
+    width: auto !important;
     justify-content: center !important;
+  }
+
+  /* Sleek Horizontal Swipable Commerce Toolbar */
+  .live-commerce-toolbar {
+    padding: 6px 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 6px !important;
+    background: rgba(14, 20, 33, 0.94) !important;
+    border-bottom: 1px solid var(--border-glass) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .live-commerce-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .commerce-toolbar-buttons-grid {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .btn-commerce-action {
+    font-size: 0.72rem !important;
+    padding: 6px 10px !important;
+    min-height: 32px !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+    touch-action: manipulation !important;
+  }
+
+  .commerce-city-tag {
+    font-size: 0.7rem !important;
+    padding: 2px 8px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Waiting Human Alert Banner on Mobile */
+  .chat-waiting-alert-banner {
+    margin: 6px 8px 0 !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.12) 100%) !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  }
+
+  .chat-waiting-alert-text {
+    font-size: 0.75rem !important;
+    color: #fbbf24 !important;
+    font-weight: 600 !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .chat-waiting-alert-actions {
+    display: flex !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .btn-compact-action {
+    font-size: 0.7rem !important;
+    padding: 4px 8px !important;
+    min-height: 28px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Live Assignment Banner on Mobile */
+  .chat-live-assignment-banner {
+    padding: 6px 8px !important;
+    font-size: 0.72rem !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+  }
+
+  .assignment-banner-actions {
+    display: flex !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
   }
 
   .chat-filter-tabs-scroll {
@@ -7480,21 +7803,45 @@ html, body {
     min-height: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    padding: 12px 10px !important;
+    padding: 10px 8px !important;
+    gap: 12px !important;
   }
 
-  .chat-input-bar,
+  .message-bubble {
+    max-width: 86% !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Fixed/Docked bottom chat input bar on mobile */
   .chat-input-area {
-    flex-shrink: 0 !important;
     padding: 8px 10px !important;
     gap: 8px !important;
     background: rgba(15, 22, 36, 0.98) !important;
+    border-top: 1px solid var(--border-glass) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 30 !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
   }
 
-  .chat-input-bar input,
   .chat-input-area input {
     font-size: 16px !important;
     min-height: 42px !important;
+    padding: 8px 14px !important;
+    border-radius: var(--radius-full) !important;
+  }
+
+  .btn-chat-send {
+    width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
   }
 }
 
@@ -7589,13 +7936,72 @@ html, body {
     gap: 14px !important;
   }
 
+  .composer-datetime-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .composer-code-row {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
   .campaigns-channels-row {
     flex-direction: column !important;
     width: 100% !important;
+    gap: 8px !important;
   }
 
   .campaigns-channels-row label {
     width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .coupons-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .coupon-item-card {
+    padding: 14px 12px !important;
+  }
+
+  .broadcast-history-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 12px 14px !important;
+    gap: 10px !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid var(--border-glass) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .broadcast-history-info {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .broadcast-history-actions {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding-top: 10px !important;
+    margin-top: 4px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Prevent any card containers from spilling out or squishing content */
+  .glass-card {
+    padding: 14px 12px !important;
+    border-radius: 12px !important;
     box-sizing: border-box !important;
   }
 }
@@ -7695,5 +8101,546 @@ html, body {
     font-size: 0.74rem !important;
   }
 }
+
+/* ==========================================================================
+   25. UNIVERSAL ADMIN & STAFF PAGE ACTION BARS (.admin-page-actions)
+   ========================================================================== */
+.admin-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .admin-page-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 12px !important;
+  }
+
+  .admin-page-actions .btn {
+    width: 100% !important;
+    min-height: 40px !important;
+    justify-content: center !important;
+    font-size: 0.78rem !important;
+    padding: 8px 10px !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  /* When there are 3 or 4 buttons, the primary action spans the full row */
+  .admin-page-actions .btn-primary {
+    grid-column: 1 / -1 !important;
+    min-height: 44px !important;
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* When only 2 buttons exist */
+  .admin-page-actions:has(.btn:nth-child(2):last-child) .btn-primary {
+    grid-column: span 1 !important;
+  }
+}
+
+/* ==========================================================================
+   26. UNIVERSAL RESPONSIVE TABLES & ROW ACTIONS (.table-responsive-wrapper)
+   ========================================================================== */
+.table-responsive-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 14px !important;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+@media (max-width: 768px) {
+  .custom-table {
+    min-width: 580px !important;
+    width: 100% !important;
+  }
+
+  /* Table action buttons inside cells: never collapse or overlap */
+  .table-responsive-wrapper td div[style*="inline-flex"],
+  .table-responsive-wrapper td div[style*="display: inline-flex"],
+  .table-responsive-wrapper td div[style*="display: flex"] {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+  }
+
+  .table-responsive-wrapper td .btn,
+  .table-responsive-wrapper td button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    min-height: 32px !important;
+    padding: 4px 10px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
+/* ==========================================================================
+   27. ORDERS CARD ACTIONS BAR & MOBILE STEPPERS (.order-card-actions-bar)
+   ========================================================================== */
+.order-card-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .order-card-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .order-card-actions-bar {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+
+  .btn-order-primary-action {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+
+  .btn-order-action {
+    width: 100% !important;
+    min-height: 38px !important;
+    justify-content: center !important;
+    font-size: 0.74rem !important;
+    padding: 6px 6px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  .btn-cancel-action,
+  .btn-return-action {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .order-courier-tag {
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ==========================================================================
+   28. UNIVERSAL MOBILE MODALS & FORM DIALOGS (ALL PAGES)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 9999 !important;
+  }
+
+  .modal-dialog,
+  .modal-content-card,
+  .modal-overlay .glass-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-dialog input,
+  .modal-dialog select,
+  .modal-dialog textarea,
+  .modal-content-card input,
+  .modal-content-card select,
+  .modal-content-card textarea,
+  .modal-overlay .glass-card input,
+  .modal-overlay .glass-card select,
+  .modal-overlay .glass-card textarea {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    min-height: 42px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Two Column Form Layouts inside modals become 1 column */
+  .modal-dialog form div[style*="gridTemplateColumns"],
+  .modal-overlay .glass-card form div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Modal Footer action buttons (e.g. Cancel + Confirm) */
+  .modal-dialog form > div:last-child,
+  .modal-content-card form > div:last-child,
+  .modal-overlay .glass-card form > div:last-child {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 16px !important;
+  }
+
+  .modal-dialog form > div:last-child button,
+  .modal-content-card form > div:last-child button,
+  .modal-overlay .glass-card form > div:last-child button {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ==========================================================================
+   29. TOP NAVBAR MOBILE OPTIMIZATIONS (BUTTON PROTECTION)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .top-navbar {
+    padding: 0 10px !important;
+    height: 56px !important;
+    gap: 6px !important;
+  }
+
+  .nav-left {
+    min-width: 0 !important;
+    flex: 1 !important;
+    gap: 8px !important;
+  }
+
+  .nav-title {
+    font-size: 0.95rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 160px !important;
+  }
+
+  .nav-right {
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .status-badge-text {
+    display: none !important;
+  }
+
+  .status-badge {
+    padding: 6px !important;
+    min-width: 24px !important;
+    height: 24px !important;
+    justify-content: center !important;
+  }
+
+  .nav-user-email {
+    display: none !important;
+  }
+
+  .nav-user-chip {
+    padding: 2px 6px !important;
+  }
+
+  .nav-btn-text {
+    display: none !important;
+  }
+
+  .nav-action-btn {
+    padding: 6px 8px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .nav-theme-wrap {
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 440px) {
+  .nav-title {
+    max-width: 120px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .nav-user-chip {
+    display: none !important;
+  }
+
+  .status-badge {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   30. ADMIN & STAFF PAGES MOBILE LAYOUTS & TOUCH CONTROLS
+   ========================================================================== */
+
+/* Orders Page Mobile Optimizations */
+.orders-filter-scroll-bar {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.orders-filter-pill-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .orders-header-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .orders-search-wrap {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .btn-take-order-mobile {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+  }
+
+  .orders-filter-scroll-bar {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 6px 4px !important;
+  }
+
+  .orders-filter-scroll-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .orders-filter-pill-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 7px 14px !important;
+    font-size: 0.76rem !important;
+  }
+}
+
+/* Campaigns Page Mobile Optimizations */
+.campaigns-tab-switcher {
+  display: flex;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.campaigns-tab-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .campaigns-tab-switcher {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4px !important;
+    margin-top: 10px !important;
+  }
+
+  .campaigns-tab-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 8px 10px !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+  }
+
+  .campaigns-coupons-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .btn-add-coupon-mobile {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+  }
+}
+
+/* Analytics Page Mobile Optimizations */
+@media (max-width: 768px) {
+  .analytics-header-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .analytics-header-controls {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .analytics-time-pills-bar {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 4px !important;
+  }
+
+  .analytics-time-pills-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .analytics-time-pills-bar button {
+    flex: 1 0 auto !important;
+    white-space: nowrap !important;
+    padding: 7px 12px !important;
+    text-align: center !important;
+    font-size: 0.76rem !important;
+  }
+
+  .analytics-header-controls > .btn {
+    min-height: 40px !important;
+    justify-content: center !important;
+  }
+}
+
+/* Team Management Mobile Optimizations */
+@media (max-width: 768px) {
+  .btn-add-staff-mobile {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+  }
+
+  .team-filter-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .team-filter-bar > div:first-child {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .team-filter-bar > div:last-child {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px !important;
+  }
+
+  .team-filter-bar > div:last-child button {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 7px 4px !important;
+    font-size: 0.72rem !important;
+    text-align: center !important;
+  }
+}
+
+/* Dashboard Overview Card Mobile Optimizations */
+.overview-hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .overview-hero-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .overview-hero-card .btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+}
+
+/* KnowledgeBase & FAQs Mobile Optimizations */
+@media (max-width: 768px) {
+  .btn-add-faq-mobile {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+  }
+
+  .faq-search-form {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .faq-search-form input {
+    width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  .faq-search-form button {
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: center !important;
+  }
+}
+
+
 
 

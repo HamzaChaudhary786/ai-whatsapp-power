@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { api } from '../api/client';
 
-export default function LiveInbox({ user }) {
+export default function LiveInbox({ user, onActiveConvChange }) {
   const [conversations, setConversations] = useState([]);
   const [activeConv, setActiveConv] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -67,7 +67,10 @@ export default function LiveInbox({ user }) {
 
   useEffect(() => {
     activeConvRef.current = activeConv;
-  }, [activeConv]);
+    if (onActiveConvChange) {
+      onActiveConvChange(Boolean(activeConv));
+    }
+  }, [activeConv, onActiveConvChange]);
 
   // Load staff & admin team members
   const loadStaffUsers = async () => {
@@ -79,6 +82,8 @@ export default function LiveInbox({ user }) {
     }
   };
 
+  const hasInitialSelectionHappenedRef = useRef(false);
+
   // Poll conversations frequently for live incoming customer chats
   const loadConversations = async () => {
     try {
@@ -87,16 +92,19 @@ export default function LiveInbox({ user }) {
       setConversations(list);
 
       const current = activeConvRef.current;
-      if (!current) {
-        // Initial load: prefer waiting conversation or first one
-        if (list.length > 0) {
+      const isMobileScreen = typeof window !== 'undefined' && window.innerWidth <= 768;
+
+      if (!hasInitialSelectionHappenedRef.current) {
+        hasInitialSelectionHappenedRef.current = true;
+        // Auto-select initial chat only on desktop; mobile screens show conversation list first
+        if (!isMobileScreen && list.length > 0) {
           const waitingOne = list.find((c) => c.status === 'WAITING_HUMAN');
           const initial = waitingOne || list[0];
           setActiveConv(initial);
           activeConvRef.current = initial;
         }
-      } else {
-        // Refresh currently active conversation without overriding user selection
+      } else if (current) {
+        // Refresh currently active conversation without overriding user selection or back navigation
         const updated = list.find((c) => c.id === current.id);
         if (updated) {
           setActiveConv(updated);
@@ -630,7 +638,10 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                 <button
                   type="button"
                   className="chat-mobile-back-btn"
-                  onClick={() => setActiveConv(null)}
+                  onClick={() => {
+                    setActiveConv(null);
+                    activeConvRef.current = null;
+                  }}
                   title="Back to conversation list"
                   aria-label="Back to conversations"
                 >
@@ -638,30 +649,21 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   <span>Chats</span>
                 </button>
                 <div className="live-chat-user-info">
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <h3 className="live-chat-customer-name">
                     <span>{activeConv.customer_name || 'Customer'}</span>
                     {activeConv.customer_phone && (
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                      <span className="live-chat-phone-tag">
                         ({activeConv.customer_phone})
                       </span>
                     )}
                     {activeConv.status === 'WAITING_HUMAN' && (
-                      <span
-                        style={{
-                          background: '#f59e0b',
-                          color: '#0f172a',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                        }}
-                      >
+                      <span className="live-chat-badge-human">
                         NEEDS HUMAN REPLY
                       </span>
                     )}
                   </h3>
-                  <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
-                    Channel: {activeConv.channel === 'web_chat' ? 'Web AI Stylist' : 'WhatsApp Cloud API'} • ID: {activeConv.id}
+                  <span className="live-chat-channel-sub">
+                    {activeConv.channel === 'web_chat' ? 'Web AI Stylist' : 'WhatsApp Cloud API'} • #{activeConv.id?.slice(-6)}
                   </span>
                 </div>
               </div>
@@ -669,20 +671,13 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
               {/* Staff Reassignment Controls */}
               <div className="live-chat-header-actions">
                 {assignmentFeedback && (
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#10b981',
-                      fontWeight: 600,
-                      animation: 'fadeIn 0.2s',
-                    }}
-                  >
+                  <span className="assignment-feedback-text">
                     ✓ {assignmentFeedback}
                   </span>
                 )}
 
                 <div className="reassign-dropdown-wrap">
-                  <Users size={15} style={{ color: 'var(--text-muted)' }} />
+                  <Users size={14} style={{ color: 'var(--text-muted)' }} />
                   <select
                     className="reassign-select"
                     value={activeConv.assigned_user_id || 'AI_BOT'}
@@ -692,7 +687,7 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                     <option value="AI_BOT">🤖 AI Stylist (Aria)</option>
                     {staffUsers.map((st) => (
                       <option key={st.id} value={st.id}>
-                        👤 {st.email} ({st.role})
+                        👤 {st.email.split('@')[0]} ({st.role})
                       </option>
                     ))}
                   </select>
@@ -705,25 +700,10 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                     className="btn btn-resolve-ai"
                     onClick={() => handleAssignAgent('AI_BOT')}
                     disabled={assigning}
-                    style={{
-                      fontSize: '0.8rem',
-                      padding: '6px 14px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.25) 100%)',
-                      border: '1px solid rgba(168, 85, 247, 0.6)',
-                      color: '#d8b4fe',
-                      borderRadius: 'var(--radius-full)',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      boxShadow: '0 2px 8px rgba(168, 85, 247, 0.15)',
-                      whiteSpace: 'nowrap',
-                    }}
                     title="Customer query resolved! Click to reassign chat back to Aria AI Stylist"
                   >
-                    <Sparkles size={14} />
-                    <span>Resolve & Back to AI</span>
+                    <Sparkles size={13} />
+                    <span>Back to AI</span>
                   </button>
                 )}
 
@@ -732,10 +712,9 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                     className="btn btn-secondary btn-assign-me"
                     onClick={() => handleAssignAgent(user.id)}
                     disabled={assigning}
-                    style={{ fontSize: '0.8rem', padding: '6px 12px' }}
                     title="Quickly take over and assign to your account"
                   >
-                    <UserCheck size={14} />
+                    <UserCheck size={13} />
                     <span>Assign to Me</span>
                   </button>
                 )}
@@ -750,20 +729,6 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   className="btn btn-commerce-action"
                   onClick={handleRequestDeliveryAddress}
                   disabled={sending}
-                  style={{
-                    fontSize: '0.74rem',
-                    padding: '6px 12px',
-                    background: 'rgba(59, 130, 246, 0.15)',
-                    color: '#60a5fa',
-                    border: '1px solid rgba(59, 130, 246, 0.3)',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
                   title="Send structured delivery address request to customer on WhatsApp"
                 >
                   <FileText size={13} />
@@ -775,20 +740,6 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   className="btn btn-commerce-action"
                   onClick={() => setIsShareModalOpen(true)}
                   disabled={sending}
-                  style={{
-                    fontSize: '0.74rem',
-                    padding: '6px 12px',
-                    background: 'rgba(168, 85, 247, 0.15)',
-                    color: '#c084fc',
-                    border: '1px solid rgba(168, 85, 247, 0.3)',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
                   title="Pick product from catalog and send card with photo to WhatsApp"
                 >
                   <ShoppingBag size={13} />
@@ -797,23 +748,8 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
 
                 <button
                   type="button"
-                  className="btn btn-commerce-action"
+                  className="btn btn-commerce-action btn-commerce-order"
                   onClick={handleOpenOrderModal}
-                  style={{
-                    fontSize: '0.74rem',
-                    padding: '6px 12px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
-                  }}
                   title="Book order for customer with auto-filled phone & receipt dispatched to WhatsApp"
                 >
                   <ShoppingCart size={13} />
@@ -825,19 +761,6 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                   className="btn btn-commerce-action"
                   onClick={handleSendCheckoutLink}
                   disabled={sending}
-                  style={{
-                    fontSize: '0.74rem',
-                    padding: '6px 12px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    color: 'var(--text-muted)',
-                    border: '1px solid var(--border-glass)',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
-                  }}
                   title="Send direct self-checkout link to customer on WhatsApp"
                 >
                   <LinkIcon size={13} />
@@ -846,54 +769,39 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
               </div>
 
               {activeConv.customer_city && (
-                <div className="commerce-city-tag" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                <div className="commerce-city-tag">
                   <MapPin size={12} style={{ color: '#10b981' }} />
-                  <span>Saved: {activeConv.customer_city}</span>
+                  <span>{activeConv.customer_city}</span>
                 </div>
               )}
             </div>
 
             {/* Waiting for Human Alert Banner */}
             {activeConv.status === 'WAITING_HUMAN' && (
-              <div
-                style={{
-                  background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.12) 100%)',
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  padding: '10px 16px',
-                  margin: '12px 16px 0',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '12px',
-                  flexShrink: 0,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fbbf24', fontSize: '0.82rem', fontWeight: 600 }}>
-                  <AlertCircle size={16} />
+              <div className="chat-waiting-alert-banner">
+                <div className="chat-waiting-alert-text">
+                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
                   <span>
-                    <b>Customer requested human staff:</b> Aria has handed off this chat. Type below to reply directly!
+                    <b>Customer Needs Staff:</b> AI handed off this chat.
                   </span>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <div className="chat-waiting-alert-actions">
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-compact-action"
                     onClick={() => handleAssignAgent('AI_BOT')}
-                    style={{ fontSize: '0.74rem', padding: '5px 12px', color: '#c084fc', borderColor: 'rgba(192, 132, 252, 0.4)', background: 'rgba(147, 51, 234, 0.12)' }}
                     title="Resolve and reassign to AI Stylist"
                   >
-                    <Sparkles size={13} />
+                    <Sparkles size={12} />
                     <span>Back to AI</span>
                   </button>
                   {user && activeConv.assigned_user_id !== user.id && (
                     <button
                       type="button"
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-compact-action"
                       onClick={() => handleAssignAgent(user.id)}
-                      style={{ fontSize: '0.74rem', padding: '5px 12px', background: '#d97706', borderColor: '#b45309', whiteSpace: 'nowrap' }}
                     >
-                      Take Over Chat
+                      Take Over
                     </button>
                   )}
                 </div>
@@ -959,23 +867,22 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
 
             {/* Live Assignment Status & Agent Prompt Bar */}
             <div className="chat-live-assignment-banner">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                 <span className="online-dot" />
-                <span>
+                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {activeConv.assigned_user_id === user?.id
-                    ? 'Connected live: You are directly chatting with this customer via WhatsApp Cloud API.'
+                    ? 'Connected live: You are chatting directly via WhatsApp Cloud API.'
                     : activeConv.assigned_user_id === 'AI_BOT' || !activeConv.assigned_user_id
-                    ? 'AI Bot handled: You can send a direct WhatsApp message anytime to take over.'
-                    : `Assigned to ${staffUsers.find((u) => u.id === activeConv.assigned_user_id)?.email || 'Staff'}.`}
+                    ? 'Handled by Aria AI: Reply below to take over.'
+                    : `Assigned to ${staffUsers.find((u) => u.id === activeConv.assigned_user_id)?.email?.split('@')[0] || 'Staff'}.`}
                 </span>
               </div>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div className="assignment-banner-actions">
                 {(activeConv.assigned_user_id || activeConv.status === 'WAITING_HUMAN') && (
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-compact-action"
                     onClick={() => handleAssignAgent('AI_BOT')}
-                    style={{ fontSize: '0.72rem', padding: '3px 10px', color: '#c084fc', borderColor: 'rgba(192, 132, 252, 0.4)' }}
                     title="Hand back to AI Stylist (Aria)"
                   >
                     🤖 Back to AI
@@ -984,9 +891,8 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                 {user && activeConv.assigned_user_id !== user.id && (
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary btn-compact-action"
                     onClick={() => handleAssignAgent(user.id)}
-                    style={{ fontSize: '0.72rem', padding: '3px 8px' }}
                   >
                     Take Over
                   </button>
@@ -1001,13 +907,11 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
                 placeholder="Type reply to customer via WhatsApp..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                autoFocus
               />
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-primary btn-chat-send"
                 disabled={sending || !inputMessage.trim()}
-                style={{ borderRadius: 'var(--radius-full)', padding: '12px 18px' }}
                 title="Send Message"
               >
                 <Send size={18} />
