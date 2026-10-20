@@ -23,6 +23,7 @@ import {
   Search,
   CheckCircle,
   ChevronLeft,
+  ChevronDown,
 } from 'lucide-react';
 import { api } from '../api/client';
 
@@ -57,11 +58,56 @@ export default function LiveInbox({ user, onActiveConvChange }) {
     deliveryFee: 0.0,
   });
 
+  const chatMessagesRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const isNearBottomRef = useRef(true);
+  const [showJumpBottom, setShowJumpBottom] = useState(false);
+  const prevLastMessageIdRef = useRef(null);
+  const activeConvIdRef = useRef(null);
+
+  const handleMessagesScroll = () => {
+    if (!chatMessagesRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatMessagesRef.current;
+    // If agent is within 120px of bottom, consider them "at bottom"
+    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+    const nearBottom = distanceFromBottom <= 120;
+    isNearBottomRef.current = nearBottom;
+    setShowJumpBottom(!nearBottom);
+  };
+
+  const scrollToBottom = (behavior = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior });
+    } else if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+    isNearBottomRef.current = true;
+    setShowJumpBottom(false);
+  };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const convChanged = activeConvIdRef.current !== activeConv?.id;
+    activeConvIdRef.current = activeConv?.id;
+
+    // When switching to a new conversation, scroll directly to bottom
+    if (convChanged) {
+      isNearBottomRef.current = true;
+      setShowJumpBottom(false);
+      prevLastMessageIdRef.current = messages[messages.length - 1]?.id;
+      setTimeout(() => scrollToBottom('auto'), 40);
+      return;
+    }
+
+    const lastMsgId = messages[messages.length - 1]?.id;
+    const hasNewMessage = lastMsgId && lastMsgId !== prevLastMessageIdRef.current;
+    prevLastMessageIdRef.current = lastMsgId;
+
+    // ONLY scroll down if the agent is already at or near the bottom!
+    // If the agent scrolled up to read older messages, DO NOT interrupt them!
+    if (isNearBottomRef.current) {
+      scrollToBottom(hasNewMessage ? 'smooth' : 'auto');
+    }
+  }, [messages, activeConv?.id]);
 
   const activeConvRef = useRef(null);
 
@@ -119,11 +165,30 @@ export default function LiveInbox({ user, onActiveConvChange }) {
   };
 
   // Poll messages for active conversation
-  const loadMessages = async (convId) => {
+  const loadMessages = async (convId, forceScroll = false) => {
     if (!convId) return;
     try {
       const msgs = await api.getMessages(convId);
-      setMessages(msgs || []);
+      const incoming = msgs || [];
+
+      setMessages((prev) => {
+        // Return previous array reference if nothing changed, avoiding unnecessary useEffect triggers
+        if (
+          prev.length === incoming.length &&
+          (incoming.length === 0 ||
+            (prev[prev.length - 1]?.id === incoming[incoming.length - 1]?.id &&
+              prev[prev.length - 1]?.delivery_status === incoming[incoming.length - 1]?.delivery_status))
+        ) {
+          return prev;
+        }
+        return incoming;
+      });
+
+      if (forceScroll) {
+        isNearBottomRef.current = true;
+        setShowJumpBottom(false);
+        setTimeout(() => scrollToBottom('auto'), 40);
+      }
     } catch (err) {
       console.error('Failed to load messages:', err);
     }
@@ -131,10 +196,12 @@ export default function LiveInbox({ user, onActiveConvChange }) {
 
   const handleSelectConversation = (conv) => {
     if (!conv) return;
+    isNearBottomRef.current = true;
+    setShowJumpBottom(false);
     setActiveConv(conv);
     activeConvRef.current = conv;
     setInputMessage('');
-    loadMessages(conv.id);
+    loadMessages(conv.id, true);
   };
 
   const loadProducts = async () => {
@@ -170,8 +237,9 @@ export default function LiveInbox({ user, onActiveConvChange }) {
     try {
       await api.sendAgentMessage(activeConv.id, inputMessage.trim());
       setInputMessage('');
-      await loadMessages(activeConv.id);
+      await loadMessages(activeConv.id, true);
       await loadConversations();
+      scrollToBottom('smooth');
     } catch (err) {
       alert(`Failed to send message: ${err.message}`);
     } finally {
@@ -199,8 +267,9 @@ Aap bas yeh details reply kar dein, hum foran aapka parcel confirm aur dispatch 
     setSending(true);
     try {
       await api.sendAgentMessage(activeConv.id, template);
-      await loadMessages(activeConv.id);
+      await loadMessages(activeConv.id, true);
       await loadConversations();
+      scrollToBottom('smooth');
     } catch (err) {
       alert(`Failed to send address request: ${err.message}`);
     } finally {
@@ -234,8 +303,9 @@ Agar aap yeh outfit mangwana chahte hain, toh bas apna Name, Delivery Address au
     try {
       await api.sendAgentMessage(activeConv.id, caption, null);
       setIsShareModalOpen(false);
-      await loadMessages(activeConv.id);
+      await loadMessages(activeConv.id, true);
       await loadConversations();
+      scrollToBottom('smooth');
     } catch (err) {
       alert(`Failed to send product card: ${err.message}`);
     } finally {
@@ -258,8 +328,9 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
     setSending(true);
     try {
       await api.sendAgentMessage(activeConv.id, text, null);
-      await loadMessages(activeConv.id);
+      await loadMessages(activeConv.id, true);
       await loadConversations();
+      scrollToBottom('smooth');
     } catch (err) {
       alert(`Failed to send checkout link: ${err.message}`);
     } finally {
@@ -808,7 +879,11 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
               </div>
             )}
 
-            <div className="chat-messages">
+            <div
+              className="chat-messages"
+              ref={chatMessagesRef}
+              onScroll={handleMessagesScroll}
+            >
               {messages.length === 0 ? (
                 <div style={{ textAlign: 'center', margin: 'auto', color: 'var(--text-dim)' }}>
                   <Bot size={36} style={{ marginBottom: '8px', opacity: 0.5 }} />
@@ -864,6 +939,19 @@ Aap hamari official boutique website se direct collection dekh saktay hain aur a
               )}
               <div ref={messagesEndRef} />
             </div>
+
+            {/* Jump to latest message floating indicator when agent scrolled up */}
+            {showJumpBottom && (
+              <button
+                type="button"
+                className="chat-jump-bottom-btn"
+                onClick={() => scrollToBottom('smooth')}
+                title="Scroll down to latest messages"
+              >
+                <ChevronDown size={14} />
+                <span>Jump to latest</span>
+              </button>
+            )}
 
             {/* Live Assignment Status & Agent Prompt Bar */}
             <div className="chat-live-assignment-banner">
